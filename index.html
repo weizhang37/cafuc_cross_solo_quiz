@@ -2,80 +2,179 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GL 02: WRITTEN TEST - HKIAA</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CAFUC GL 02: WRITTEN TEST</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; background-color: #f4f6f8; color: #333; line-height: 1.6; padding: 20px; }
-        .container { max-width: 850px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        h1 { text-align: center; color: #003366; margin-bottom: 5px; }
-        .subtitle { text-align: center; color: #666; margin-bottom: 30px; border-bottom: 2px solid #003366; padding-bottom: 15px; font-size: 0.9rem; }
-        .info-section { background-color: #e8f4fd; padding: 20px; border-radius: 8px; margin-bottom: 30px; border-left: 5px solid #003366; }
-        .input-group label { font-weight: bold; color: #003366; display: block; margin-bottom: 8px; }
-        .input-group input { padding: 12px; border: 1px solid #ccc; border-radius: 4px; width: 100%; box-sizing: border-box; }
-        .question-card { margin-bottom: 25px; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px; background-color: #fff; position: relative; }
-        .tag { display: inline-block; background-color: #e8f0fe; color: #1967d2; padding: 3px 10px; border-radius: 4px; font-size: 0.75rem; margin-bottom: 10px; font-weight: bold; }
-        .question-text { font-size: 1.1rem; font-weight: 600; color: #2c3e50; margin-bottom: 15px; width: 85%; }
-        .btn-hint { position: absolute; top: 20px; right: 20px; background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; padding: 5px 10px; font-size: 0.8rem; border-radius: 4px; cursor: pointer; }
-        .hint-box { display: none; margin: 10px 0; padding: 10px; background-color: #fffbf2; border-left: 3px solid #ffc107; font-size: 0.9rem; font-style: italic; color: #555; }
-        .options label { display: block; padding: 12px; margin-bottom: 8px; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; transition: 0.2s; }
-        .options label:hover { background-color: #f8f9fa; border-color: #003366; }
-        .btn-submit { display: block; width: 100%; padding: 18px; background-color: #003366; color: white; font-size: 1.2rem; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 30px; }
-        #result-area { display: none; margin-top: 30px; padding: 30px; border: 3px solid #003366; border-radius: 12px; text-align: center; }
-        .score-num { font-size: 3.5rem; font-weight: bold; margin: 10px 0; }
-        .analysis-box { background: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 10px; padding: 25px; margin-top: 25px; text-align: left; }
-        .analysis-item { margin-bottom: 20px; }
-        .cat-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-weight: bold; }
-        .progress-container { height: 14px; background-color: #e9ecef; border-radius: 7px; overflow: hidden; flex-grow: 1; margin: 0 15px; }
+        /* --- Mobile-First Base Styles --- */
+        :root {
+            --primary: #003366;
+            --secondary: #e8f4fd;
+            --accent: #ffc107;
+            --success: #28a745;
+            --danger: #dc3545;
+        }
+
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            background-color: #f0f2f5; 
+            color: #1a1a1a; 
+            line-height: 1.5; 
+            margin: 0; 
+            padding: 10px; /* Reduced for mobile edges */
+        }
+
+        .container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+            background: white; 
+            padding: 15px; 
+            border-radius: 12px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); 
+        }
+
+        h1 { text-align: center; color: var(--primary); font-size: 1.4rem; margin: 10px 0; }
+        .subtitle { text-align: center; color: #666; font-size: 0.85rem; margin-bottom: 20px; border-bottom: 1px solid #ddd; padding-bottom: 10px; }
+
+        /* Input Section */
+        .info-section { background-color: var(--secondary); padding: 15px; border-radius: 10px; margin-bottom: 20px; }
+        .input-group label { font-weight: bold; color: var(--primary); display: block; margin-bottom: 8px; font-size: 0.9rem; }
+        .input-group input { 
+            padding: 12px; 
+            border: 1px solid #ccc; 
+            border-radius: 8px; 
+            width: 100%; 
+            box-sizing: border-box; 
+            font-size: 1rem; /* Prevents iOS zoom on focus */
+        }
+
+        /* Question Cards */
+        .question-card { 
+            margin-bottom: 20px; 
+            padding: 15px; 
+            border: 1px solid #eee; 
+            border-radius: 10px; 
+            background: #fff; 
+            position: relative;
+        }
+        
+        .tag { display: inline-block; background-color: #f0f4f8; color: #1967d2; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; margin-bottom: 10px; font-weight: bold; }
+        
+        .question-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+        .question-text { font-size: 1rem; font-weight: 600; color: #333; margin-bottom: 15px; flex: 1; }
+        
+        .btn-hint { 
+            background-color: #fff3cd; 
+            color: #856404; 
+            border: 1px solid #ffeeba; 
+            padding: 6px 12px; 
+            font-size: 0.75rem; 
+            border-radius: 6px; 
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .hint-box { display: none; margin: 10px 0; padding: 10px; background-color: #fffbf2; border-left: 4px solid var(--accent); font-size: 0.85rem; font-style: italic; color: #555; }
+
+        /* Options - Large touch targets for Mobile */
+        .options label { 
+            display: flex; 
+            align-items: center; 
+            padding: 14px; 
+            margin-bottom: 10px; 
+            border: 1px solid #ddd; 
+            border-radius: 10px; 
+            cursor: pointer; 
+            transition: 0.2s; 
+            font-size: 0.95rem;
+            background: #fafafa;
+        }
+        .options input { margin-right: 12px; width: 18px; height: 18px; }
+        
+        /* Buttons */
+        .btn-submit { 
+            display: block; 
+            width: 100%; 
+            padding: 16px; 
+            background-color: var(--primary); 
+            color: white; 
+            font-size: 1.1rem; 
+            border: none; 
+            border-radius: 10px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            margin-top: 20px; 
+        }
+
+        /* Result Area */
+        #result-area { display: none; margin-top: 20px; padding: 20px; border: 2px solid var(--primary); border-radius: 15px; text-align: center; }
+        .score-num { font-size: 3rem; font-weight: bold; margin: 10px 0; }
+        
+        .analysis-box { background: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 12px; padding: 15px; margin-top: 20px; text-align: left; }
+        .analysis-item { margin-bottom: 15px; }
+        .cat-header { display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: bold; margin-bottom: 5px; }
+        
+        .progress-container { height: 10px; background-color: #e9ecef; border-radius: 5px; overflow: hidden; margin-bottom: 5px; }
         .progress-bar { height: 100%; transition: width 1s ease-in-out; }
-        .bar-wrapper { display: flex; align-items: center; justify-content: space-between; }
-        .status-tag { font-size: 0.85rem; font-weight: bold; width: 120px; text-align: right; }
-        .feedback { display: none; margin-top: 15px; padding: 15px; border-radius: 6px; font-size: 0.95rem; border-left: 5px solid #666; background: #f9f9f9; }
-        .correct-bg { background-color: #d4edda !important; border-color: #28a745 !important; }
-        .wrong-bg { background-color: #f8d7da !important; border-color: #dc3545 !important; }
-        .action-btns { display: flex; gap: 15px; justify-content: center; margin-top: 25px; }
-        .btn-secondary { padding: 12px 25px; cursor: pointer; font-weight: bold; border-radius: 6px; border: 1px solid #003366; background: white; color: #003366; }
-        .btn-primary { padding: 12px 25px; cursor: pointer; font-weight: bold; border-radius: 6px; background: #003366; color: white; border: none; }
+        .status-row { display: flex; justify-content: flex-end; }
+        .status-tag { font-size: 0.75rem; font-weight: bold; }
+
+        .feedback { display: none; margin-top: 12px; padding: 12px; border-radius: 8px; font-size: 0.85rem; border-left: 4px solid #666; background: #f4f4f4; text-align: left; }
+        .correct-bg { background-color: #d4edda !important; border-color: var(--success) !important; }
+        .wrong-bg { background-color: #f8d7da !important; border-color: var(--danger) !important; }
+
+        /* Floating Action Buttons for Mobile Result */
+        .action-btns { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 20px; }
+        .btn-action { padding: 14px; cursor: pointer; font-weight: bold; border-radius: 8px; border: none; font-size: 1rem; }
+        .btn-pdf { background: var(--primary); color: white; }
+        .btn-review { background: var(--accent); color: #000; }
+        .btn-restart { background: #6c757d; color: white; }
 
         @media print {
-            .btn-submit, .btn-hint, .action-btns, .info-section, .subtitle { display: none !important; }
+            .btn-submit, .btn-hint, .action-btns, .info-section, .subtitle, .btn-action { display: none !important; }
             .container { box-shadow: none; border: none; width: 100%; padding: 0; }
-            body { background: white; padding: 0; }
-            #result-area { display: block !important; border: 1px solid #ccc; }
-            .question-card { border: 1px solid #eee; break-inside: avoid; }
+            #quiz-form, .feedback { display: block !important; }
+        }
+
+        /* Tablet/Desktop tweaks */
+        @media (min-width: 600px) {
+            body { padding: 20px; }
+            h1 { font-size: 1.8rem; }
+            .action-btns { grid-template-columns: 1fr 1fr 1fr; }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>✈️ GL 02: WRITTEN TEST</h1>
-    <div class="subtitle">Aeronautical Knowledge Assessment | 20 Random Questions | Pass: 80%</div>
+    <h1>✈️ CAFUC GL 02: WRITTEN TEST</h1>
+    <div class="subtitle">HKIAA Assessment | 20 Questions | Pass: 80%</div>
     
-    <div class="info-section">
+    <div class="info-section" id="student-info-input">
         <div class="input-group">
-            <label>Candidate Name:</label>
-            <input type="text" id="studentName" placeholder="Enter student full name">
+            <label>Full Name:</label>
+            <input type="text" id="studentName" placeholder="Candidate Name">
         </div>
     </div>
 
     <form id="quiz-form"></form>
 
-    <button type="button" class="btn-submit" onclick="submitQuiz()">Submit & Generate Report</button>
+    <button type="button" class="btn-submit" id="main-submit-btn" onclick="submitQuiz()">Submit & Generate Report</button>
 
     <div id="result-area">
-        <h2 id="res-name" style="color: #003366; margin-bottom: 5px;">GL 02: WRITTEN TEST REPORT</h2>
-        <div id="res-student" style="font-size: 1.2rem; font-weight: bold; margin-bottom: 10px;"></div>
+        <h2 style="color: var(--primary); margin: 0; font-size: 1.2rem;">CAFUC GL 02: WRITTEN TEST REPORT</h2>
+        <div id="res-student" style="font-size: 1rem; margin: 10px 0;"></div>
         <div class="score-num" id="score-display">0%</div>
-        <div id="res-msg" style="font-size: 1.2rem; font-weight: bold; margin-bottom: 10px;"></div>
+        <div id="res-msg" style="font-weight: bold; margin-bottom: 15px;"></div>
         
         <div class="analysis-box">
-            <h3 style="margin-top:0; border-bottom:1px solid #ddd; padding-bottom:10px;">📊 Performance Analytics</h3>
+            <h3 style="margin:0 0 10px 0; font-size: 1rem; border-bottom:1px solid #ddd; padding-bottom:5px;">📊 Performance Analysis</h3>
             <div id="analysis-content"></div>
         </div>
         
         <div class="action-btns">
-            <button class="btn-primary" onclick="window.print()">Download PDF Report</button>
-            <button class="btn-secondary" onclick="window.location.reload()">Restart New Test</button>
+            <button class="btn-action btn-review" onclick="reviewMistakes()">🔍 Review Mistakes</button>
+            <button class="btn-action btn-pdf" onclick="window.print()">📥 Save PDF</button>
+            <button class="btn-action btn-restart" onclick="window.location.reload()">🔄 Restart</button>
         </div>
     </div>
 </div>
@@ -83,62 +182,62 @@
 <script>
     const pool = [
         // A: Regs & Qualifications (12)
-        { cat: "Regs & Qualifications", q: "What is the minimum flight time required for HK students before the first solo (including check)?", opts: ["20.5h", "23.5h", "25h", "29h"], ans: 1, hint: "Check the Rev2 update of the ZUGH Training Manual specifically for HK cadets.", r: "ZUGH manual Rev2: Minimum 23.5 hours required for HK cadets." },
-        { cat: "Regs & Qualifications", q: "Minimum landings required in the aircraft before solo flight?", opts: ["50", "60", "70", "80"], ans: 2, hint: "Higher than the basic帶飞 requirement to ensure consistent stability.", r: "At least 70 landings must be documented in the student's training record." },
-        { cat: "Regs & Qualifications", q: "Where is the pre-solo endorsement signed for HK students?", opts: ["Cloud App", "Physical Logbook/Record", "ID", "License"], ans: 1, hint: "HK cadets follow traditional physical documentation protocols.", r: "Instructor must sign the physical Logbook or Training Record." },
-        { cat: "Regs & Qualifications", q: "The pre-solo endorsement is valid for how many calendar days?", opts: ["7", "14", "30", "60"], ans: 2, r: "The endorsement is valid for 30 calendar days per CCAR-141." },
-        { cat: "Regs & Qualifications", q: "Who confirms the aircraft is safe for flight?", opts: ["Tower", "Mechanic", "PIC", "Owner"], ans: 2, hint: "The final authority on the aircraft.", r: "The PIC is the final authority for determining airworthiness before flight." },
-        { cat: "Regs & Qualifications", q: "Minimum fuel reserve for Day VFR flight?", opts: ["15m", "30m", "45m", "60m"], ans: 1, hint: "Enough to reach destination plus a 30-minute buffer.", r: "30 minutes at normal cruise speed is required for Day VFR." },
-        { cat: "Regs & Qualifications", q: "Head-on collision avoidance rule?", opts: ["Left", "Right", "Climb", "Descend"], ans: 1, hint: "Follow the standard right-hand traffic principle.", r: "Both aircraft must alter course to the right." },
-        { cat: "Regs & Qualifications", q: "Who has right-of-way during overtaking?", opts: ["Overtaker", "Overtaken", "Faster", "Lower"], ans: 1, hint: "The aircraft being passed has the priority.", r: "The aircraft being overtaken has the right-of-way." },
-        { cat: "Regs & Qualifications", q: "Restraints required during takeoff and landing?", opts: ["Seatbelt only", "Shoulder Harness only", "Both", "None"], ans: 2, r: "Both seatbelt and shoulder harness must be secured." },
-        { cat: "Regs & Qualifications", q: "Altitude over congested area (radius 600m)?", opts: ["500ft", "1000ft above obstacle", "2000ft", "3000ft"], ans: 1, hint: "Think about engine failure safety over a city.", r: "1000ft (300m) above the highest obstacle." },
-        { cat: "Regs & Qualifications", q: "Documents student must carry for solo?", opts: ["ID", "Medical + Logbook with Endorsement", "License only", "Birth Cert"], ans: 1, r: "Medical certificate and endorsed Logbook are mandatory." },
-        { cat: "Regs & Qualifications", q: "Can a student pilot carry passengers?", opts: ["Yes", "No", "Family only", "Students only"], ans: 1, hint: "Check Student Pilot limitations vs Private Pilot privileges.", r: "Student pilots are strictly prohibited from carrying passengers." },
+        { cat: "Regs & Qualifications", q: "Minimum flight hours for HK cadets before solo (inc check)?", opts: ["20.5h", "23.5h", "25h", "29h"], ans: 1, hint: "Review ZUGH Manual Rev2 for specific HK Cadet经历.", r: "ZUGH manual Rev2 requires minimum 23.5 hours for HK students." },
+        { cat: "Regs & Qualifications", q: "Minimum landings required in the aircraft before solo?", opts: ["50", "60", "70", "80"], ans: 2, hint: "A pilot must be consistent. This is 10 more than the '60' mark.", r: "70 landings must be documented in the record." },
+        { cat: "Regs & Qualifications", q: "Where is the pre-solo endorsement signed for HK cadets?", opts: ["Cloud App", "Physical Logbook/Record", "ID Card", "Checklist"], ans: 1, hint: "Digital platforms are for domestic students only.", r: "Physical Logbooks are used for HK cadet endorsements." },
+        { cat: "Regs & Qualifications", q: "Validity of pre-solo education training?", opts: ["7 days", "14 days", "30 days", "60 days"], ans: 2, r: "Valid for 30 calendar days per CCAR-141." },
+        { cat: "Regs & Qualifications", q: "Who confirms the aircraft is safe for flight?", opts: ["ATC", "Mechanic", "PIC", "Instructor"], ans: 2, r: "The PIC is final authority for airworthiness." },
+        { cat: "Regs & Qualifications", q: "Day VFR fuel reserve requirement?", opts: ["15m", "30m", "45m", "60m"], ans: 1, r: "30 minutes at normal cruise speed." },
+        { cat: "Regs & Qualifications", q: "Head-on collision avoidance rule?", opts: ["Left", "Right", "Climb", "ATC call"], ans: 1, r: "Both aircraft must alter course to the right." },
+        { cat: "Regs & Qualifications", q: "Right-of-way when overtaking?", opts: ["Overtaker", "Overtaken", "Faster", "Larger"], ans: 1, r: "The aircraft being overtaken has right-of-way." },
+        { cat: "Regs & Qualifications", q: "Restraints required during takeoff?", opts: ["Seatbelt", "Harness", "Both", "None"], ans: 2, r: "Both seatbelt and shoulder harness are mandatory." },
+        { cat: "Regs & Qualifications", q: "Altitude over congested area?", opts: ["500ft", "1000ft above obstacle", "2000ft", "3000ft"], ans: 1, r: "1000ft above highest obstacle." },
+        { cat: "Regs & Qualifications", q: "Documents required on person for solo?", opts: ["ID", "Medical + Endorsed Logbook", "Manuals", "Log only"], ans: 1, r: "Medical and endorsed Logbook are required." },
+        { cat: "Regs & Qualifications", q: "Can a student pilot carry passengers?", opts: ["Yes", "No", "Family", "Students"], ans: 1, r: "Strictly prohibited." },
 
         // B: Procedures & Weather (13)
-        { cat: "Procedures & Weather", q: "Max ground wind for first solo at ZUGH?", opts: ["3m/s", "5m/s", "8m/s", "10m/s"], ans: 0, hint: "Solo limits are much more conservative than dual limits.", r: "Ground wind limit: 3m/s for first solo." },
-        { cat: "Procedures & Weather", q: "Max crosswind for first solo at ZUGH?", opts: ["1m/s", "2m/s", "3m/s", "5m/s"], ans: 1, hint: "Half of the standard demonstrated limit.", r: "Crosswind limit: 2m/s for first solo." },
-        { cat: "Procedures & Weather", q: "Max tailwind for first solo at ZUGH?", opts: ["0m/s", "1m/s", "2m/s", "3m/s"], ans: 1, hint: "A very slight breeze from behind is the limit.", r: "Tailwind limit: 1m/s." },
-        { cat: "Procedures & Weather", q: "Min visibility for solo flight?", opts: ["3km", "5km", "8km", "10km"], ans: 1, hint: "Higher than the standard VFR 3km limit.", r: "Visibility minimum: 5km." },
-        { cat: "Procedures & Weather", q: "Min cloud ceiling for solo flight?", opts: ["300m", "450m", "600m", "1000m"], ans: 2, r: "Ceiling must be at least 600m." },
-        { cat: "Procedures & Weather", q: "Why use full runway length for takeoff?", opts: ["Habit", "Safety margin for abort", "ATC", "Fuel"], ans: 1, hint: "Think about an engine failure right at rotation.", r: "To maximize available stopping distance in an emergency." },
-        { cat: "Procedures & Weather", q: "Procedure for the first lap of a first solo?", opts: ["Full stop", "Touch & Go", "Go-around", "Low Pass"], ans: 2, hint: "Verification lap.", r: "Mandatory go-around check is required on the first lap." },
-        { cat: "Procedures & Weather", q: "Taxiway centerline color?", opts: ["White", "Yellow", "Blue", "Green"], ans: 1, hint: "Markings on taxiways vs runways.", r: "Taxiway centerlines are yellow." },
-        { cat: "Procedures & Weather", q: "Taxiway edge light color?", opts: ["White", "Yellow", "Blue", "Green"], ans: 2, hint: "Lights defining the edge of the taxi path.", r: "Taxiway edge lights are blue." },
-        { cat: "Procedures & Weather", q: "Before takeoff clearance, what must you not cross?", opts: ["Edge", "Main Gear", "Hold-short line", "Taxi line"], ans: 2, hint: "The boundary of the runway environment.", r: "No part of the aircraft may cross the hold-short line." },
-        { cat: "Procedures & Weather", q: "Runway 13 magnetic heading?", opts: ["013 deg", "130 deg approx", "310 deg", "113 deg"], ans: 1, hint: "Remove the last zero from the heading.", r: "Runway 13 corresponds to roughly 130 degrees magnetic." },
-        { cat: "Procedures & Weather", q: "Where to place flight bag to prevent seat slip?", opts: ["Trunk", "Behind Right", "Behind Left", "Feet"], ans: 2, hint: "Blocking the pilot seat track.", r: "Behind the left seat provides a physical block." },
-        { cat: "Procedures & Weather", q: "Wind cone shows tailwind on final?", opts: ["Ignore", "Confirm with ATC", "Land", "Panic"], ans: 1, hint: "Sensor data vs visual aid.", r: "Always confirm official wind with ATC if in doubt." },
+        { cat: "Procedures & Weather", q: "Max ground wind for first solo at ZUGH?", opts: ["3m/s", "5m/s", "8m/s", "10m/s"], ans: 0, r: "Ground wind limit: 3m/s." },
+        { cat: "Procedures & Weather", q: "Max crosswind for first solo at ZUGH?", opts: ["1m/s", "2m/s", "3m/s", "5m/s"], ans: 1, r: "Crosswind limit: 2m/s." },
+        { cat: "Procedures & Weather", q: "Max tailwind for first solo at ZUGH?", opts: ["0m/s", "1m/s", "2m/s", "3m/s"], ans: 1, r: "Tailwind limit: 1m/s." },
+        { cat: "Procedures & Weather", q: "Min visibility for solo flight?", opts: ["3km", "5km", "8km", "10km"], ans: 1, r: "Visibility minimum: 5km." },
+        { cat: "Procedures & Weather", q: "Min ceiling for solo flight?", opts: ["300m", "450m", "600m", "1000m"], ans: 2, r: "Ceiling minimum: 600m." },
+        { cat: "Procedures & Weather", q: "Why use full runway for takeoff?", opts: ["ATC", "Safety margin for abort", "Habit", "Fuel"], ans: 1, r: "Maximizes stopping distance in emergency." },
+        { cat: "Procedures & Weather", q: "Procedure for first lap of first solo?", opts: ["Full stop", "Touch & Go", "Go-around", "Check"], ans: 2, r: "Mandatory go-around check required." },
+        { cat: "Procedures & Weather", q: "Taxiway centerline color?", opts: ["White", "Yellow", "Blue", "Green"], ans: 1, r: "Yellow centerline." },
+        { cat: "Procedures & Weather", q: "Taxiway edge light color?", opts: ["White", "Yellow", "Blue", "Green"], ans: 2, r: "Edge lights are blue." },
+        { cat: "Procedures & Weather", q: "Line you must not cross without clearance?", opts: ["Edge", "Main Gear", "Hold-short", "Center"], ans: 2, r: "Runway hold-short line." },
+        { cat: "Procedures & Weather", q: "Runway 13 magnetic azimuth approx?", opts: ["013 deg", "130 deg", "310 deg", "113 deg"], ans: 1, r: "Roughly 130 degrees magnetic." },
+        { cat: "Procedures & Weather", q: "Flight bag location to stop seat slip?", opts: ["Trunk", "Right", "Behind Left Seat", "Feet"], ans: 2, hint: "Acts as a physical block for the pilot seat track.", r: "Behind the left seat." },
+        { cat: "Procedures & Weather", q: "Wind cone shows tailwind on final?", opts: ["Ignore", "Confirm with ATC", "Land", "Panic"], ans: 1, r: "Always confirm wind with ATC." },
 
         // C: Performance & Systems (13)
-        { cat: "Performance & Systems", q: "SR20 approach speed 0% Flaps?", opts: ["80 KIAS", "84 KIAS", "89 KIAS", "95 KIAS"], ans: 2, hint: "Higher energy required for no-flap landing.", r: "SR20 Manual: 89 KIAS for 0% flaps." },
-        { cat: "Performance & Systems", q: "SR20 approach speed 50% Flaps?", opts: ["78 KIAS", "80 KIAS", "84 KIAS", "89 KIAS"], ans: 2, hint: "Standard landing configuration speed.", r: "SR20 Manual: 84 KIAS for 50% flaps." },
-        { cat: "Performance & Systems", q: "Bottom of white arc speed?", opts: ["Vs1", "Vso", "Vfe", "Vne"], ans: 1, hint: "Stall speed in landing config.", r: "Vso: Stalling speed in landing configuration." },
-        { cat: "Performance & Systems", q: "Vy purpose?", opts: ["Dist", "Alt in Time", "Safety", "Econ"], ans: 1, hint: "Greatest altitude gain.", r: "Best rate of climb: Greatest altitude gain per unit of time." },
-        { cat: "Performance & Systems", q: "Top of green arc speed?", opts: ["Vfe", "Vno", "Vne", "Va"], ans: 1, hint: "Normal operating limit.", r: "Vno: Maximum structural cruising speed." },
-        { cat: "Performance & Systems", q: "Winter air effect on takeoff?", opts: ["Longer", "Shorter", "None", "Bumpy"], ans: 1, hint: "Denser air = more lift/thrust.", r: "Denser air shortens the ground roll." },
-        { cat: "Performance & Systems", q: "Screens too dark in day, check?", opts: ["Batt", "Panel Light Dimmer", "Alt", "Breaker"], ans: 1, hint: "User adjustment error.", r: "Check daytime panel light dimmer settings." },
-        { cat: "Performance & Systems", q: "Aft CG effect on stability?", opts: ["More stable", "Less stable", "No change", "Easy"], ans: 1, hint: "Center of gravity moves closer to center of lift.", r: "Decreased longitudinal stability." },
-        { cat: "Performance & Systems", q: "Load factor in 60-degree bank?", opts: ["1.41G", "1.5G", "2G", "3G"], ans: 2, hint: "Increases significantly with bank.", r: "60-degree bank = 2.0 Gs." },
-        { cat: "Performance & Systems", q: "Blocked Pitot (open drain) effect?", opts: ["Const", "Zero", "Max", "OK"], ans: 1, hint: "Loss of dynamic pressure.", r: "Indicated airspeed will drop to zero." },
-        { cat: "Performance & Systems", q: "Ground Effect result?", opts: ["Drag", "Less Induced Drag", "Stall", "Alt"], ans: 1, hint: "Wingtip vortex restriction.", r: "Induced drag decreases near ground." },
-        { cat: "Performance & Systems", q: "Flap range arc color?", opts: ["White", "Green", "Yellow", "Red"], ans: 0, r: "White arc on the ASI." },
-        { cat: "Performance & Systems", q: "What causes a stall?", opts: ["Speed", "Weight", "Critical AoA", "Temp"], ans: 2, hint: "Angle between chord line and relative wind.", r: "Exceeding the critical angle of attack." },
+        { cat: "Performance & Systems", q: "SR20 approach speed 0% Flaps?", opts: ["80 KIAS", "84 KIAS", "89 KIAS", "95 KIAS"], ans: 2, r: "Manual: 89 KIAS for 0% flaps." },
+        { cat: "Performance & Systems", q: "SR20 approach speed 50% Flaps?", opts: ["78 KIAS", "80 KIAS", "84 KIAS", "89 KIAS"], ans: 2, r: "Manual: 84 KIAS for 50% flaps." },
+        { cat: "Performance & Systems", q: "Bottom of white arc speed?", opts: ["Vs1", "Vso", "Vfe", "Vne"], ans: 1, r: "Vso landing stall speed." },
+        { cat: "Performance & Systems", q: "Vy best rate of climb purpose?", opts: ["Distance", "Altitude in Time", "Safety", "Fuel"], ans: 1, r: "Greatest altitude gain over time." },
+        { cat: "Performance & Systems", q: "Top of green arc speed?", opts: ["Vfe", "Vno", "Vne", "Va"], ans: 1, r: "Vno max structural cruise." },
+        { cat: "Performance & Systems", q: "Winter air effect on takeoff?", opts: ["Longer", "Shorter roll", "None", "Bumpy"], ans: 1, hint: "Dense air provides more lift and engine power.", r: "Denser air shortens the ground roll." },
+        { cat: "Performance & Systems", q: "Screens too dark in day, check?", opts: ["Batt", "Panel Dimmer", "Alt", "Breaker"], ans: 1, r: "Check panel dimmer settings." },
+        { cat: "Performance & Systems", q: "Aft CG effect on stability?", opts: ["Stable", "Less Stable", "None", "Better"], ans: 1, r: "Decreased longitudinal stability." },
+        { cat: "Performance & Systems", q: "Load factor in 60-degree bank?", opts: ["1.4G", "1.5G", "2G", "3G"], ans: 2, r: "60 deg = 2.0 Gs." },
+        { cat: "Performance & Systems", q: "Blocked Pitot (open drain) effect?", opts: ["Constant", "Zero", "Max", "OK"], ans: 1, r: "Indicated airspeed drops to zero." },
+        { cat: "Performance & Systems", q: "Ground Effect result?", opts: ["Drag", "Less Induced Drag", "Stall", "Speed"], ans: 1, r: "Reduction in induced drag." },
+        { cat: "Performance & Systems", q: "Flap range arc color?", opts: ["White", "Green", "Yellow", "Red"], ans: 0, r: "White arc." },
+        { cat: "Performance & Systems", q: "Primary cause of stall?", opts: ["Speed", "Weight", "Critical AoA", "Temp"], ans: 2, r: "Exceeding critical angle of attack." },
 
         // D: Emergency & Human Factors (12)
-        { cat: "Emergency & Human Factors", q: "Engine fail low altitude after takeoff?", opts: ["Turn back", "Land Straight ahead (30 deg sector)", "Parachute", "Call"], ans: 1, hint: "Avoid the 'impossible turn'.", r: "Land within a 30-degree sector of the nose." },
-        { cat: "Emergency & Human Factors", q: "Handle bounced landing?", opts: ["Push down", "Pull back", "Hold attitude + Power + Go-around", "Brake"], ans: 2, hint: "Recover energy and stabilize.", r: "Go-around is the safest option for a severe bounce." },
-        { cat: "Emergency & Human Factors", q: "Door opens during takeoff?", opts: ["Close", "Fly Airplane", "Report", "Stop"], ans: 1, hint: "Aviate, Navigate, Communicate.", r: "Prioritize aircraft control first." },
-        { cat: "Emergency & Human Factors", q: "Spin requirements?", opts: ["Speed", "Stall + Yaw", "Bank", "Low Fuel"], ans: 1, hint: "Uncoordinated stall.", r: "Aggravated stall in uncoordinated flight." },
-        { cat: "Emergency & Human Factors", q: "Rotate behind large aircraft?", opts: ["After", "Before", "End", "Same"], ans: 1, hint: "Avoiding wake vortices.", r: "Rotate before its liftoff point." },
-        { cat: "Emergency & Human Factors", q: "Wake turbulence interval behind A320?", opts: ["1m", "2m", "5m", "10m"], ans: 1, hint: "Standard separation.", r: "2 minutes for wake turbulence separation." },
-        { cat: "Emergency & Human Factors", q: "HK students must evaluate which FTD emergency?", opts: ["Gear", "CAPS Activation", "Icing", "Fuel"], ans: 1, r: "FTD03 CAPS assessment." },
-        { cat: "Emergency & Human Factors", q: "External unfavorable conditions in TEM?", opts: ["Errors", "Threats", "UAS", "Hazards"], ans: 1, r: "Threats are external factors beyond pilot control." },
-        { cat: "Emergency & Human Factors", q: "Action for unstable approach?", opts: ["Fix", "Cont", "Go-around", "Slow"], ans: 2, hint: "When in doubt, climb out.", r: "Mandatory go-around." },
-        { cat: "Emergency & Human Factors", q: "Final fitness authority for solo?", opts: ["Student", "Instructor", "ATC", "Mechanic"], ans: 1, r: "The authorized flight instructor." },
-        { cat: "Emergency & Human Factors", q: "Dizzy/tingling in flight?", opts: ["Hunger", "Hyperventilation", "Cold", "Sleep"], ans: 1, hint: "Stress-induced breathing.", r: "Symptoms of hyperventilation." },
-        { cat: "Emergency & Human Factors", q: "Feeling faster near ground?", opts: ["Slow", "Faster", "Stat", "Blurry"], ans: 1, r: "Ground speed illusion." }
+        { cat: "Emergency & Human Factors", q: "Engine fail low altitude after takeoff?", opts: ["Turn back", "Land ahead (30 deg sector)", "Deploy CAPS", "Call"], ans: 1, r: "Land within 30-deg sector ahead." },
+        { cat: "Emergency & Human Factors", q: "How to handle a bounced landing?", opts: ["Push", "Pull", "Hold attitude + Power + Go-around", "Brake"], ans: 2, hint: "Recover energy, stabilize, or try again from air.", r: "Go-around is safest." },
+        { cat: "Emergency & Human Factors", q: "Door opens during takeoff?", opts: ["Close", "Fly Airplane", "Report", "Stop"], ans: 1, r: "Aviate first: Maintain control." },
+        { cat: "Emergency & Human Factors", q: "Requirement for a spin?", opts: ["Speed", "Stall + Yaw", "Bank", "Low Fuel"], ans: 1, r: "Aggravated stall in uncoordinated flight." },
+        { cat: "Emergency & Human Factors", q: "Rotation behind large aircraft?", opts: ["After", "Before its point", "End", "Same"], ans: 1, r: "Rotate before preceding plane's point." },
+        { cat: "Emergency & Human Factors", q: "Wake turbulence interval behind A320?", opts: ["1m", "2m", "5m", "10m"], ans: 1, r: "Standard 2 minutes." },
+        { cat: "Emergency & Human Factors", q: "FTD emergency eval for HK cadets?", opts: ["Gear", "CAPS Deployment", "Icing", "Fuel"], ans: 1, r: "FTD03 CAPS assessment." },
+        { cat: "Emergency & Human Factors", q: "External unfavorable conditions in TEM?", opts: ["Errors", "Threats", "UAS", "Hazards"], ans: 1, r: "External factors = Threats." },
+        { cat: "Emergency & Human Factors", q: "Mandatory action for unstable approach?", opts: ["Fix", "Continue", "Go-around", "Slower"], ans: 2, r: "Mandatory go-around." },
+        { cat: "Emergency & Human Factors", q: "Final fitness authority for student solo?", opts: ["Student", "Instructor", "ATC", "Mechanic"], ans: 1, r: "Authorized flight instructor." },
+        { cat: "Emergency & Human Factors", q: "Dizzy/tingling in flight symptoms?", opts: ["Hunger", "Hyperventilation", "Cold", "Sleep"], ans: 1, r: "Hyperventilation symptoms." },
+        { cat: "Emergency & Human Factors", q: "Feeling faster near ground illusion?", opts: ["Slow", "Faster", "Stationary", "Blurry"], ans: 1, r: "Ground rushing illusion." }
     ];
 
     let currentTest = [];
@@ -168,12 +267,14 @@
             card.className = 'question-card';
             card.innerHTML = `
                 <div class="tag">${item.cat}</div>
-                <button type="button" class="btn-hint" onclick="toggleHint(${i})">💡 Hint</button>
-                <div class="question-text">${i + 1}. ${item.q}</div>
-                <div class="hint-box" id="hint${i}"><b>Hint:</b> ${item.hint}</div>
+                <div class="question-header">
+                    <div class="question-text">${i + 1}. ${item.q}</div>
+                    <button type="button" class="btn-hint" onclick="toggleHint(${i})">💡 Hint</button>
+                </div>
+                <div class="hint-box" id="hint${i}"><b>Hint:</b> ${item.hint || "Think of standard ops."}</div>
                 <div class="options">
                     ${item.opts.map((o, oi) => `
-                        <label id="q${i}_o${oi}"><input type="radio" name="q${i}" value="${oi}"> ${String.fromCharCode(65+oi)}. ${o}</label>
+                        <label id="q${i}_o${oi}"><input type="radio" name="q${i}" value="${oi}"> ${o}</label>
                     `).join('')}
                 </div>
                 <div class="feedback" id="fb${i}"></div>
@@ -184,7 +285,7 @@
 
     function submitQuiz() {
         const name = document.getElementById('studentName').value.trim();
-        if(!name) { alert("Enter Candidate Name!"); return; }
+        if(!name) { alert("Please enter Candidate Name!"); return; }
 
         let score = 0;
         const categoryStats = {};
@@ -200,10 +301,10 @@
             if(selected && parseInt(selected.value) === item.ans) {
                 score++;
                 categoryStats[item.cat].correct++;
-                fb.innerHTML = `<span style="color:#155724; font-weight:bold;">✅ Correct.</span> ${item.r}`;
+                fb.innerHTML = `<span style="color:var(--success); font-weight:bold;">✅ Correct.</span> ${item.r}`;
                 document.getElementById(`q${i}_o${item.ans}`).classList.add('correct-bg');
             } else {
-                fb.innerHTML = `<span style="color:#721c24; font-weight:bold;">❌ Incorrect.</span> Correct answer: ${String.fromCharCode(65+item.ans)}. ${item.r}`;
+                fb.innerHTML = `<span style="color:var(--danger); font-weight:bold;">❌ Incorrect.</span> Correct: ${item.opts[item.ans]}. ${item.r}`;
                 if(selected) document.getElementById(`q${i}_o${selected.value}`).classList.add('wrong-bg');
                 document.getElementById(`q${i}_o${item.ans}`).classList.add('correct-bg');
             }
@@ -214,7 +315,9 @@
 
     function displayResults(name, score, stats) {
         document.getElementById('quiz-form').style.display = 'none';
-        document.querySelector('.btn-submit').style.display = 'none';
+        document.getElementById('main-submit-btn').style.display = 'none';
+        document.getElementById('student-info-input').style.display = 'none';
+        
         const resArea = document.getElementById('result-area');
         resArea.style.display = 'block';
         
@@ -224,37 +327,34 @@
         
         const msg = document.getElementById('res-msg');
         if(finalPercent >= 80) {
-            msg.innerText = "STATUS: PASS (Qualified for Solo Flight)";
-            msg.style.color = "#155724";
+            msg.innerText = "STATUS: PASS";
+            msg.style.color = "var(--success)";
         } else {
-            msg.innerText = "STATUS: FAIL (Remedial Training Required)";
-            msg.style.color = "#d32f2f";
+            msg.innerText = "STATUS: FAIL";
+            msg.style.color = "var(--danger)";
         }
 
         let analysisHtml = '';
         for (let cat in stats) {
             const stat = stats[cat];
             const accuracy = Math.round((stat.correct / stat.total) * 100);
-            let color = accuracy >= 80 ? '#28a745' : (accuracy >= 60 ? '#ffc107' : '#dc3545');
+            let color = accuracy >= 80 ? 'var(--success)' : (accuracy >= 60 ? 'var(--accent)' : 'var(--danger)');
             let status = accuracy >= 80 ? '🌟 Mastered' : (accuracy >= 60 ? '🔨 Solidify' : '⚠️ Review');
 
             analysisHtml += `
                 <div class="analysis-item">
-                    <div class="cat-header">
-                        <span class="cat-name">${cat}</span>
-                        <span>${accuracy}% (${stat.correct}/${stat.total})</span>
-                    </div>
-                    <div class="bar-wrapper">
-                        <div class="progress-container">
-                            <div class="progress-bar" style="width: ${accuracy}%; background-color: ${color};"></div>
-                        </div>
-                        <div class="status-tag" style="color: ${color};">${status}</div>
-                    </div>
-                </div>
-            `;
+                    <div class="cat-header"><span>${cat}</span><span>${accuracy}%</span></div>
+                    <div class="progress-container"><div class="progress-bar" style="width:${accuracy}%; background-color:${color}"></div></div>
+                    <div class="status-row"><span class="status-tag" style="color:${color}">${status} (${stat.correct}/${stat.total})</span></div>
+                </div>`;
         }
         document.getElementById('analysis-content').innerHTML = analysisHtml;
         window.scrollTo(0, 0);
+    }
+
+    function reviewMistakes() {
+        document.getElementById('quiz-form').style.display = 'block';
+        window.scrollTo({ top: document.getElementById('quiz-form').offsetTop, behavior: 'smooth' });
     }
 
     window.onload = initTest;
