@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HKIAA Pre-Solo Aeronautical Knowledge Test</title>
+    <title>GL 02: WRITTEN TEST - HKIAA</title>
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; background-color: #f4f6f8; color: #333; line-height: 1.6; padding: 20px; }
         .container { max-width: 850px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
@@ -32,97 +32,113 @@
         .feedback { display: none; margin-top: 15px; padding: 15px; border-radius: 6px; font-size: 0.95rem; border-left: 5px solid #666; background: #f9f9f9; }
         .correct-bg { background-color: #d4edda !important; border-color: #28a745 !important; }
         .wrong-bg { background-color: #f8d7da !important; border-color: #dc3545 !important; }
+        .action-btns { display: flex; gap: 15px; justify-content: center; margin-top: 25px; }
+        .btn-secondary { padding: 12px 25px; cursor: pointer; font-weight: bold; border-radius: 6px; border: 1px solid #003366; background: white; color: #003366; }
+        .btn-primary { padding: 12px 25px; cursor: pointer; font-weight: bold; border-radius: 6px; background: #003366; color: white; border: none; }
+
+        @media print {
+            .btn-submit, .btn-hint, .action-btns, .info-section, .subtitle { display: none !important; }
+            .container { box-shadow: none; border: none; width: 100%; padding: 0; }
+            body { background: white; padding: 0; }
+            #result-area { display: block !important; border: 1px solid #ccc; }
+            .question-card { border: 1px solid #eee; break-inside: avoid; }
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>✈️ HKIAA Pre-Solo Written Test</h1>
-    <div class="subtitle">SR20 Operations | 20 Random Questions | Total 80% to Pass</div>
+    <h1>✈️ GL 02: WRITTEN TEST</h1>
+    <div class="subtitle">Aeronautical Knowledge Assessment | 20 Random Questions | Pass: 80%</div>
     
     <div class="info-section">
         <div class="input-group">
-            <label>Student Name:</label>
-            <input type="text" id="studentName" placeholder="Enter your full name">
+            <label>Candidate Name:</label>
+            <input type="text" id="studentName" placeholder="Enter student full name">
         </div>
     </div>
 
     <form id="quiz-form"></form>
 
-    <button type="button" class="btn-submit" onclick="submitQuiz()">Submit & Analyze Performance</button>
+    <button type="button" class="btn-submit" onclick="submitQuiz()">Submit & Generate Report</button>
 
     <div id="result-area">
-        <div id="res-name" style="font-size: 1.6rem; font-weight: bold; color: #003366;"></div>
+        <h2 id="res-name" style="color: #003366; margin-bottom: 5px;">GL 02: WRITTEN TEST REPORT</h2>
+        <div id="res-student" style="font-size: 1.2rem; font-weight: bold; margin-bottom: 10px;"></div>
         <div class="score-num" id="score-display">0%</div>
         <div id="res-msg" style="font-size: 1.2rem; font-weight: bold; margin-bottom: 10px;"></div>
         
         <div class="analysis-box">
-            <h3 style="margin-top:0; border-bottom:1px solid #ddd; padding-bottom:10px;">📊 Performance Analysis</h3>
+            <h3 style="margin-top:0; border-bottom:1px solid #ddd; padding-bottom:10px;">📊 Performance Analytics</h3>
             <div id="analysis-content"></div>
         </div>
-        <button onclick="window.location.reload()" style="margin-top:25px; padding:12px 25px; cursor:pointer; font-weight:bold;">Restart New Session</button>
+        
+        <div class="action-btns">
+            <button class="btn-primary" onclick="window.print()">Download PDF Report</button>
+            <button class="btn-secondary" onclick="window.location.reload()">Restart New Test</button>
+        </div>
     </div>
 </div>
 
 <script>
     const pool = [
         // A: Regs & Qualifications (12)
-        { cat: "Regs & Qualifications", q: "Minimum flight hours for HK students before solo (inc check)?", opts: ["20.5h", "23.5h", "25h", "29h"], ans: 1, hint: "Check the Rev2 update of the ZUGH Training Manual specifically for HK cadets.", r: "ZUGH manual Rev2: Minimum 23.5 hours required for HK cadets." },
-        { cat: "Regs & Qualifications", q: "Minimum landings required in the aircraft before solo?", opts: ["50", "60", "70", "80"], ans: 2, hint: "A pilot must perform enough 'touch and goes' to be consistent. This number is slightly higher than basic requirements.", r: "At least 70 landings must be documented in the student's training record." },
-        { cat: "Regs & Qualifications", q: "Where is the pre-solo endorsement signed for HK students?", opts: ["Cloud App", "Physical Logbook/Record", "ID", "License"], ans: 1, hint: "Digital apps are used for mainland students; HK cadets still follow traditional physical documentation.", r: "HK cadets use physical Logbooks or paper training records for instructor endorsements." },
-        { cat: "Regs & Qualifications", q: "Pre-solo endorsement is valid for how many days?", opts: ["7", "14", "30", "60"], ans: 2, r: "The endorsement is valid for 30 calendar days per CCAR-141R3." },
-        { cat: "Regs & Qualifications", q: "Who confirms the aircraft is safe for flight?", opts: ["Tower", "Mechanic", "PIC", "Owner"], ans: 2, hint: "The responsibility lies with the person behind the controls.", r: "The PIC is the final authority for determining airworthiness before flight." },
-        { cat: "Regs & Qualifications", q: "Day VFR fuel reserve requirement?", opts: ["15m", "30m", "45m", "60m"], ans: 1, hint: "Calculate the time needed to reach a secondary landing site if the primary is closed.", r: "A reserve of 30 minutes at normal cruise speed is required for Day VFR." },
-        { cat: "Regs & Qualifications", q: "Head-on collision avoidance rule?", opts: ["Left", "Right", "Climb", "Descend"], ans: 1, hint: "Aviation traffic rules follow the 'Right Hand' principle.", r: "Both aircraft must alter course to the right." },
-        { cat: "Regs & Qualifications", q: "Who has right-of-way during overtaking?", opts: ["Overtaker", "Overtaken", "Faster", "Lower"], ans: 1, hint: "The aircraft with limited visibility of the other has the priority.", r: "The aircraft being overtaken has the right-of-way." },
-        { cat: "Regs & Qualifications", q: "Restraints required during takeoff?", opts: ["Seatbelt", "Shoulder Harness", "Both", "None"], ans: 2, r: "Both seatbelt and shoulder harness must be secured during critical phases." },
-        { cat: "Regs & Qualifications", q: "Altitude over congested area (radius 600m)?", opts: ["500ft", "1000ft above obstacle", "2000ft", "3000ft"], ans: 1, hint: "Think about engine failure glide distance over a city.", r: "1000ft (300m) above the highest obstacle." },
-        { cat: "Regs & Qualifications", q: "Documents student must carry for solo?", opts: ["ID", "Medical + Logbook with Endorsement", "License only", "Birth Cert"], ans: 1, r: "A medical certificate and a properly endorsed Logbook are mandatory." },
-        { cat: "Regs & Qualifications", q: "Can a student pilot carry passengers?", opts: ["Yes", "No", "Family only", "Students only"], ans: 1, hint: "Private Pilot privileges are different from Student Pilot limitations.", r: "Student pilots are strictly prohibited from carrying passengers." },
+        { cat: "Regs & Qualifications", q: "What is the minimum flight time required for HK students before the first solo (including check)?", opts: ["20.5h", "23.5h", "25h", "29h"], ans: 1, hint: "Check the Rev2 update of the ZUGH Training Manual specifically for HK cadets.", r: "ZUGH manual Rev2: Minimum 23.5 hours required for HK cadets." },
+        { cat: "Regs & Qualifications", q: "Minimum landings required in the aircraft before solo flight?", opts: ["50", "60", "70", "80"], ans: 2, hint: "Higher than the basic帶飞 requirement to ensure consistent stability.", r: "At least 70 landings must be documented in the student's training record." },
+        { cat: "Regs & Qualifications", q: "Where is the pre-solo endorsement signed for HK students?", opts: ["Cloud App", "Physical Logbook/Record", "ID", "License"], ans: 1, hint: "HK cadets follow traditional physical documentation protocols.", r: "Instructor must sign the physical Logbook or Training Record." },
+        { cat: "Regs & Qualifications", q: "The pre-solo endorsement is valid for how many calendar days?", opts: ["7", "14", "30", "60"], ans: 2, r: "The endorsement is valid for 30 calendar days per CCAR-141." },
+        { cat: "Regs & Qualifications", q: "Who confirms the aircraft is safe for flight?", opts: ["Tower", "Mechanic", "PIC", "Owner"], ans: 2, hint: "The final authority on the aircraft.", r: "The PIC is the final authority for determining airworthiness before flight." },
+        { cat: "Regs & Qualifications", q: "Minimum fuel reserve for Day VFR flight?", opts: ["15m", "30m", "45m", "60m"], ans: 1, hint: "Enough to reach destination plus a 30-minute buffer.", r: "30 minutes at normal cruise speed is required for Day VFR." },
+        { cat: "Regs & Qualifications", q: "Head-on collision avoidance rule?", opts: ["Left", "Right", "Climb", "Descend"], ans: 1, hint: "Follow the standard right-hand traffic principle.", r: "Both aircraft must alter course to the right." },
+        { cat: "Regs & Qualifications", q: "Who has right-of-way during overtaking?", opts: ["Overtaker", "Overtaken", "Faster", "Lower"], ans: 1, hint: "The aircraft being passed has the priority.", r: "The aircraft being overtaken has the right-of-way." },
+        { cat: "Regs & Qualifications", q: "Restraints required during takeoff and landing?", opts: ["Seatbelt only", "Shoulder Harness only", "Both", "None"], ans: 2, r: "Both seatbelt and shoulder harness must be secured." },
+        { cat: "Regs & Qualifications", q: "Altitude over congested area (radius 600m)?", opts: ["500ft", "1000ft above obstacle", "2000ft", "3000ft"], ans: 1, hint: "Think about engine failure safety over a city.", r: "1000ft (300m) above the highest obstacle." },
+        { cat: "Regs & Qualifications", q: "Documents student must carry for solo?", opts: ["ID", "Medical + Logbook with Endorsement", "License only", "Birth Cert"], ans: 1, r: "Medical certificate and endorsed Logbook are mandatory." },
+        { cat: "Regs & Qualifications", q: "Can a student pilot carry passengers?", opts: ["Yes", "No", "Family only", "Students only"], ans: 1, hint: "Check Student Pilot limitations vs Private Pilot privileges.", r: "Student pilots are strictly prohibited from carrying passengers." },
 
         // B: Procedures & Weather (13)
-        { cat: "Procedures & Weather", q: "Max ground wind for first solo at ZUGH?", opts: ["3m/s", "5m/s", "8m/s", "10m/s"], ans: 0, hint: "Solo limits are significantly more conservative than dual instruction limits.", r: "Ground wind limit: 3m/s for the first solo flight." },
-        { cat: "Procedures & Weather", q: "Max crosswind for first solo?", opts: ["1m/s", "2m/s", "3m/s", "5m/s"], ans: 1, hint: "It is exactly half of the POH demonstrated limit for many light aircraft.", r: "Crosswind limit: 2m/s for first solo." },
-        { cat: "Procedures & Weather", q: "Max tailwind for first solo?", opts: ["0m/s", "1m/s", "2m/s", "3m/s"], ans: 1, hint: "The standard allows for a very slight breeze from behind.", r: "Tailwind limit: 1m/s." },
-        { cat: "Procedures & Weather", q: "Min visibility for solo?", opts: ["3km", "5km", "8km", "10km"], ans: 1, hint: "Standard VFR visibility is 3km, but Solo requires a higher safety buffer.", r: "Visibility minimum: 5km." },
-        { cat: "Procedures & Weather", q: "Min cloud ceiling for solo?", opts: ["300m", "450m", "600m", "1000m"], ans: 2, r: "The ceiling must be at least 600m for safe pattern work." },
-        { cat: "Procedures & Weather", q: "Reason for using full runway for takeoff?", opts: ["Habit", "Safety margin for abort", "ATC", "Fuel"], ans: 1, hint: "In case of a partial power loss on rotation, where would you want to be?", r: "To maximize available stopping distance in an emergency." },
-        { cat: "Procedures & Weather", q: "Procedure for first lap of first solo?", opts: ["Full stop", "Touch & Go", "Go-around", "Low Pass"], ans: 2, hint: "This verifies your ability to handle a discontinued landing before doing the real thing.", r: "A mandatory go-around check is required on the first lap." },
-        { cat: "Procedures & Weather", q: "Taxiway centerline color?", opts: ["White", "Yellow", "Blue", "Green"], ans: 1, hint: "Runway markings are white; Taxiway markings are another color.", r: "Taxiway centerlines are yellow." },
-        { cat: "Procedures & Weather", q: "Taxiway edge light color?", opts: ["White", "Yellow", "Blue", "Green"], ans: 2, hint: "Runway edge is white; taxiway edge is different.", r: "Taxiway edge lights are blue." },
-        { cat: "Procedures & Weather", q: "Must not cross without clearance?", opts: ["Edge", "Main Gear", "Hold-short line", "Taxi line"], ans: 2, hint: "The boundary between the taxiway and the runway.", r: "No part of the aircraft may cross the runway hold-short line." },
-        { cat: "Procedures & Weather", q: "Runway 13 means?", opts: ["Alt", "130 degrees mag approx", "Length", "Freq"], ans: 1, hint: "Remove the last zero from the magnetic heading.", r: "Runway 13 corresponds to roughly 130 degrees magnetic." },
-        { cat: "Procedures & Weather", q: "Flight bag location to stop seat slip?", opts: ["Trunk", "Behind Right", "Behind Left", "Feet"], ans: 2, hint: "Place it directly behind the pilot's seat track.", r: "Behind the left seat acts as a physical blockage for the seat rail." },
-        { cat: "Procedures & Weather", q: "Wind cone shows tailwind on final?", opts: ["Ignore", "Confirm with ATC", "Land", "Panic"], ans: 1, hint: "Never trust a visual aid over official sensor data from the tower.", r: "Always confirm official wind data with ATC if the cone looks unsafe." },
+        { cat: "Procedures & Weather", q: "Max ground wind for first solo at ZUGH?", opts: ["3m/s", "5m/s", "8m/s", "10m/s"], ans: 0, hint: "Solo limits are much more conservative than dual limits.", r: "Ground wind limit: 3m/s for first solo." },
+        { cat: "Procedures & Weather", q: "Max crosswind for first solo at ZUGH?", opts: ["1m/s", "2m/s", "3m/s", "5m/s"], ans: 1, hint: "Half of the standard demonstrated limit.", r: "Crosswind limit: 2m/s for first solo." },
+        { cat: "Procedures & Weather", q: "Max tailwind for first solo at ZUGH?", opts: ["0m/s", "1m/s", "2m/s", "3m/s"], ans: 1, hint: "A very slight breeze from behind is the limit.", r: "Tailwind limit: 1m/s." },
+        { cat: "Procedures & Weather", q: "Min visibility for solo flight?", opts: ["3km", "5km", "8km", "10km"], ans: 1, hint: "Higher than the standard VFR 3km limit.", r: "Visibility minimum: 5km." },
+        { cat: "Procedures & Weather", q: "Min cloud ceiling for solo flight?", opts: ["300m", "450m", "600m", "1000m"], ans: 2, r: "Ceiling must be at least 600m." },
+        { cat: "Procedures & Weather", q: "Why use full runway length for takeoff?", opts: ["Habit", "Safety margin for abort", "ATC", "Fuel"], ans: 1, hint: "Think about an engine failure right at rotation.", r: "To maximize available stopping distance in an emergency." },
+        { cat: "Procedures & Weather", q: "Procedure for the first lap of a first solo?", opts: ["Full stop", "Touch & Go", "Go-around", "Low Pass"], ans: 2, hint: "Verification lap.", r: "Mandatory go-around check is required on the first lap." },
+        { cat: "Procedures & Weather", q: "Taxiway centerline color?", opts: ["White", "Yellow", "Blue", "Green"], ans: 1, hint: "Markings on taxiways vs runways.", r: "Taxiway centerlines are yellow." },
+        { cat: "Procedures & Weather", q: "Taxiway edge light color?", opts: ["White", "Yellow", "Blue", "Green"], ans: 2, hint: "Lights defining the edge of the taxi path.", r: "Taxiway edge lights are blue." },
+        { cat: "Procedures & Weather", q: "Before takeoff clearance, what must you not cross?", opts: ["Edge", "Main Gear", "Hold-short line", "Taxi line"], ans: 2, hint: "The boundary of the runway environment.", r: "No part of the aircraft may cross the hold-short line." },
+        { cat: "Procedures & Weather", q: "Runway 13 magnetic heading?", opts: ["013 deg", "130 deg approx", "310 deg", "113 deg"], ans: 1, hint: "Remove the last zero from the heading.", r: "Runway 13 corresponds to roughly 130 degrees magnetic." },
+        { cat: "Procedures & Weather", q: "Where to place flight bag to prevent seat slip?", opts: ["Trunk", "Behind Right", "Behind Left", "Feet"], ans: 2, hint: "Blocking the pilot seat track.", r: "Behind the left seat provides a physical block." },
+        { cat: "Procedures & Weather", q: "Wind cone shows tailwind on final?", opts: ["Ignore", "Confirm with ATC", "Land", "Panic"], ans: 1, hint: "Sensor data vs visual aid.", r: "Always confirm official wind with ATC if in doubt." },
 
         // C: Performance & Systems (13)
-        { cat: "Performance & Systems", q: "SR20 approach speed 0% Flaps?", opts: ["80 KIAS", "84 KIAS", "89 KIAS", "95 KIAS"], ans: 2, hint: "No flaps means less drag but higher stall speed, so you need more energy.", r: "SR20 Landing data: 89 KIAS for 0% flaps." },
-        { cat: "Performance & Systems", q: "SR20 approach speed 50% Flaps?", opts: ["78 KIAS", "80 KIAS", "84 KIAS", "89 KIAS"], ans: 2, hint: "This is the standard approach speed for a normal landing.", r: "SR20 Landing data: 84 KIAS for 50% flaps." },
-        { cat: "Performance & Systems", q: "Bottom of white arc speed?", opts: ["Vs1", "Vso", "Vfe", "Vne"], ans: 1, hint: "The speed at which the plane drops in landing configuration.", r: "Vso: Stalling speed in landing configuration." },
-        { cat: "Performance & Systems", q: "Vy purpose?", opts: ["Dist", "Alt in Time", "Safety", "Econ"], ans: 1, hint: "How fast can you reach 3000ft?", r: "Best rate of climb: Greatest altitude gain per unit of time." },
-        { cat: "Performance & Systems", q: "Top of green arc speed?", opts: ["Vfe", "Vno", "Vne", "Va"], ans: 1, hint: "Entering the yellow arc means caution; what is the speed just before that?", r: "Vno: Maximum structural cruising speed." },
-        { cat: "Performance & Systems", q: "Winter air effect on takeoff?", opts: ["Longer", "Shorter", "None", "Bumpy"], ans: 1, hint: "Denser air creates more lift and more engine power.", r: "High air density shortens the ground roll significantly." },
-        { cat: "Performance & Systems", q: "Screens too dark in day, check?", opts: ["Batt", "Panel Light Dimmer", "Alt", "Breaker"], ans: 1, hint: "It is usually a user setting rather than a system failure.", r: "Check daytime panel light dimmer settings." },
-        { cat: "Performance & Systems", q: "Aft CG effect?", opts: ["Stable", "Less Stable", "None", "Easy"], ans: 1, hint: "The center of lift is now closer to the center of gravity.", r: "Decreased longitudinal stability and harder stall recovery." },
-        { cat: "Performance & Systems", q: "Load factor in 60-degree bank?", opts: ["1.41G", "1.5G", "2G", "3G"], ans: 2, hint: "The G-load increases exponentially with bank angle.", r: "60-degree bank = 2.0 Gs in a level turn." },
-        { cat: "Performance & Systems", q: "Blocked Pitot (open drain) effect?", opts: ["Const", "Zero", "Max", "OK"], ans: 1, hint: "Total pressure equals static pressure in this case.", r: "Indicated airspeed will drop to zero." },
-        { cat: "Performance & Systems", q: "Ground Effect result?", opts: ["Drag", "Less Induced Drag", "Stall", "Alt"], ans: 1, r: "Reduced induced drag within one wingspan of the ground." },
+        { cat: "Performance & Systems", q: "SR20 approach speed 0% Flaps?", opts: ["80 KIAS", "84 KIAS", "89 KIAS", "95 KIAS"], ans: 2, hint: "Higher energy required for no-flap landing.", r: "SR20 Manual: 89 KIAS for 0% flaps." },
+        { cat: "Performance & Systems", q: "SR20 approach speed 50% Flaps?", opts: ["78 KIAS", "80 KIAS", "84 KIAS", "89 KIAS"], ans: 2, hint: "Standard landing configuration speed.", r: "SR20 Manual: 84 KIAS for 50% flaps." },
+        { cat: "Performance & Systems", q: "Bottom of white arc speed?", opts: ["Vs1", "Vso", "Vfe", "Vne"], ans: 1, hint: "Stall speed in landing config.", r: "Vso: Stalling speed in landing configuration." },
+        { cat: "Performance & Systems", q: "Vy purpose?", opts: ["Dist", "Alt in Time", "Safety", "Econ"], ans: 1, hint: "Greatest altitude gain.", r: "Best rate of climb: Greatest altitude gain per unit of time." },
+        { cat: "Performance & Systems", q: "Top of green arc speed?", opts: ["Vfe", "Vno", "Vne", "Va"], ans: 1, hint: "Normal operating limit.", r: "Vno: Maximum structural cruising speed." },
+        { cat: "Performance & Systems", q: "Winter air effect on takeoff?", opts: ["Longer", "Shorter", "None", "Bumpy"], ans: 1, hint: "Denser air = more lift/thrust.", r: "Denser air shortens the ground roll." },
+        { cat: "Performance & Systems", q: "Screens too dark in day, check?", opts: ["Batt", "Panel Light Dimmer", "Alt", "Breaker"], ans: 1, hint: "User adjustment error.", r: "Check daytime panel light dimmer settings." },
+        { cat: "Performance & Systems", q: "Aft CG effect on stability?", opts: ["More stable", "Less stable", "No change", "Easy"], ans: 1, hint: "Center of gravity moves closer to center of lift.", r: "Decreased longitudinal stability." },
+        { cat: "Performance & Systems", q: "Load factor in 60-degree bank?", opts: ["1.41G", "1.5G", "2G", "3G"], ans: 2, hint: "Increases significantly with bank.", r: "60-degree bank = 2.0 Gs." },
+        { cat: "Performance & Systems", q: "Blocked Pitot (open drain) effect?", opts: ["Const", "Zero", "Max", "OK"], ans: 1, hint: "Loss of dynamic pressure.", r: "Indicated airspeed will drop to zero." },
+        { cat: "Performance & Systems", q: "Ground Effect result?", opts: ["Drag", "Less Induced Drag", "Stall", "Alt"], ans: 1, hint: "Wingtip vortex restriction.", r: "Induced drag decreases near ground." },
         { cat: "Performance & Systems", q: "Flap range arc color?", opts: ["White", "Green", "Yellow", "Red"], ans: 0, r: "White arc on the ASI." },
-        { cat: "Performance & Systems", q: "Stall cause?", opts: ["Speed", "Weight", "Critical AoA", "Temp"], ans: 2, hint: "The wing can stall at any speed if this is exceeded.", r: "Critical angle of attack is the physical cause of a stall." },
+        { cat: "Performance & Systems", q: "What causes a stall?", opts: ["Speed", "Weight", "Critical AoA", "Temp"], ans: 2, hint: "Angle between chord line and relative wind.", r: "Exceeding the critical angle of attack." },
 
         // D: Emergency & Human Factors (12)
-        { cat: "Emergency & Human Factors", q: "Engine fail low altitude after takeoff?", opts: ["Turn", "Land Straight ahead", "Parachute", "Call"], ans: 1, hint: "Avoid the 'Impossible Turn' back to the runway.", r: "Land within a 30-degree sector of the nose." },
-        { cat: "Emergency & Human Factors", q: "Handle bounced landing?", opts: ["Push", "Pull", "Hold + Power + Go-around", "Brake"], ans: 2, hint: "Stabilize the energy and try again from the air.", r: "Go-around is the safest option for a severe bounce." },
-        { cat: "Emergency & Human Factors", q: "Door opens during takeoff?", opts: ["Close", "Fly Airplane", "Report", "Stop"], ans: 1, hint: "Follow the rule: Aviate, Navigate, Communicate.", r: "Prioritize aircraft control first." },
-        { cat: "Emergency & Human Factors", q: "Spin requirements?", opts: ["Speed", "Stall + Yaw", "Bank", "Low Fuel"], ans: 1, hint: "One wing must be more stalled than the other.", r: "Aggravated stall in uncoordinated flight." },
-        { cat: "Emergency & Human Factors", q: "Rotate behind large aircraft?", opts: ["After", "Before", "End", "Anywhere"], ans: 1, hint: "Stay above the wake turbulence generated by the heavy jet.", r: "Rotate before its liftoff point." },
-        { cat: "Emergency & Human Factors", q: "Wake turbulence interval behind A320?", opts: ["1m", "2m", "5m", "10m"], ans: 1, hint: "Standard time-based separation for Medium category aircraft.", r: "2 minutes for wake turbulence separation." },
-        { cat: "Emergency & Human Factors", q: "HK students must evaluate which FTD emergency?", opts: ["Gear fail", "CAPS Activation", "Icing", "Lost"], ans: 1, r: "FTD03 focuses on CAPS deployment assessment." },
-        { cat: "Emergency & Human Factors", q: "External unfavorable conditions in TEM?", opts: ["Errors", "Threats", "UAS", "Hazards"], ans: 1, r: "Threats are external factors beyond the pilot's control." },
-        { cat: "Emergency & Human Factors", q: "Action for unstable approach?", opts: ["Fix", "Cont", "Go-around", "Slow"], ans: 2, hint: "If it's not perfect, don't land.", r: "Mandatory go-around for any unstable approach." },
-        { cat: "Emergency & Human Factors", q: "Final person responsible for student solo fitness?", opts: ["Student", "Instructor", "ATC", "Mechanic"], ans: 1, r: "The authorized flight instructor." },
-        { cat: "Emergency & Human Factors", q: "Dizzy/tingling in flight?", opts: ["Hunger", "Hyperventilation", "Cold", "Sleep"], ans: 1, hint: "This happens when you breathe too fast due to stress.", r: "Common symptoms of hyperventilation." },
-        { cat: "Emergency & Human Factors", q: "Feeling faster near ground?", opts: ["Slow", "Faster", "Stat", "Blurry"], ans: 1, r: "The ground rush illusion makes speed feel higher." }
+        { cat: "Emergency & Human Factors", q: "Engine fail low altitude after takeoff?", opts: ["Turn back", "Land Straight ahead (30 deg sector)", "Parachute", "Call"], ans: 1, hint: "Avoid the 'impossible turn'.", r: "Land within a 30-degree sector of the nose." },
+        { cat: "Emergency & Human Factors", q: "Handle bounced landing?", opts: ["Push down", "Pull back", "Hold attitude + Power + Go-around", "Brake"], ans: 2, hint: "Recover energy and stabilize.", r: "Go-around is the safest option for a severe bounce." },
+        { cat: "Emergency & Human Factors", q: "Door opens during takeoff?", opts: ["Close", "Fly Airplane", "Report", "Stop"], ans: 1, hint: "Aviate, Navigate, Communicate.", r: "Prioritize aircraft control first." },
+        { cat: "Emergency & Human Factors", q: "Spin requirements?", opts: ["Speed", "Stall + Yaw", "Bank", "Low Fuel"], ans: 1, hint: "Uncoordinated stall.", r: "Aggravated stall in uncoordinated flight." },
+        { cat: "Emergency & Human Factors", q: "Rotate behind large aircraft?", opts: ["After", "Before", "End", "Same"], ans: 1, hint: "Avoiding wake vortices.", r: "Rotate before its liftoff point." },
+        { cat: "Emergency & Human Factors", q: "Wake turbulence interval behind A320?", opts: ["1m", "2m", "5m", "10m"], ans: 1, hint: "Standard separation.", r: "2 minutes for wake turbulence separation." },
+        { cat: "Emergency & Human Factors", q: "HK students must evaluate which FTD emergency?", opts: ["Gear", "CAPS Activation", "Icing", "Fuel"], ans: 1, r: "FTD03 CAPS assessment." },
+        { cat: "Emergency & Human Factors", q: "External unfavorable conditions in TEM?", opts: ["Errors", "Threats", "UAS", "Hazards"], ans: 1, r: "Threats are external factors beyond pilot control." },
+        { cat: "Emergency & Human Factors", q: "Action for unstable approach?", opts: ["Fix", "Cont", "Go-around", "Slow"], ans: 2, hint: "When in doubt, climb out.", r: "Mandatory go-around." },
+        { cat: "Emergency & Human Factors", q: "Final fitness authority for solo?", opts: ["Student", "Instructor", "ATC", "Mechanic"], ans: 1, r: "The authorized flight instructor." },
+        { cat: "Emergency & Human Factors", q: "Dizzy/tingling in flight?", opts: ["Hunger", "Hyperventilation", "Cold", "Sleep"], ans: 1, hint: "Stress-induced breathing.", r: "Symptoms of hyperventilation." },
+        { cat: "Emergency & Human Factors", q: "Feeling faster near ground?", opts: ["Slow", "Faster", "Stat", "Blurry"], ans: 1, r: "Ground speed illusion." }
     ];
 
     let currentTest = [];
@@ -168,7 +184,7 @@
 
     function submitQuiz() {
         const name = document.getElementById('studentName').value.trim();
-        if(!name) { alert("Enter Name!"); return; }
+        if(!name) { alert("Enter Candidate Name!"); return; }
 
         let score = 0;
         const categoryStats = {};
@@ -202,16 +218,16 @@
         const resArea = document.getElementById('result-area');
         resArea.style.display = 'block';
         
-        const finalPercent = (score / 20) * 100;
-        document.getElementById('res-name').innerText = name + "'s Final Report";
+        const finalPercent = Math.round((score / 20) * 100);
+        document.getElementById('res-student').innerText = "Candidate: " + name;
         document.getElementById('score-display').innerText = finalPercent + "%";
         
         const msg = document.getElementById('res-msg');
         if(finalPercent >= 80) {
-            msg.innerText = "🎉 PASS! Ready for first solo flight.";
+            msg.innerText = "STATUS: PASS (Qualified for Solo Flight)";
             msg.style.color = "#155724";
         } else {
-            msg.innerText = "⚠️ FAIL. Below 80% passing mark.";
+            msg.innerText = "STATUS: FAIL (Remedial Training Required)";
             msg.style.color = "#d32f2f";
         }
 
