@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HKIAA 学员单飞前必知必会测验 (全量题库版)</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background-color: #f4f6f8; color: #333; line-height: 1.6; margin: 0; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        h1 { text-align: center; color: #003366; margin-bottom: 10px; font-size: 1.6rem; }
+        .subtitle { text-align: center; color: #666; margin-bottom: 30px; font-size: 0.95rem; border-bottom: 2px solid #003366; padding-bottom: 15px; }
+        .info-section { background-color: #e8f4fd; padding: 20px; border-radius: 8px; margin-bottom: 30px; border-left: 5px solid #003366; }
+        .input-group label { font-weight: bold; color: #003366; margin-right: 10px; font-size: 1.1rem; }
+        .input-group input { padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 1rem; width: 60%; }
+        .question-card { margin-bottom: 25px; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px; background-color: #fff; break-inside: avoid; }
+        .tag { display: inline-block; background-color: #e8f0fe; color: #1967d2; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; margin-bottom: 8px; font-weight: bold; }
+        .question-text { font-size: 1.1rem; font-weight: 600; color: #2c3e50; margin-bottom: 15px; }
+        .options label { display: block; padding: 12px 15px; margin-bottom: 8px; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; transition: 0.2s; }
+        .options label:hover { background-color: #f8f9fa; }
+        .btn-submit { display: block; width: 100%; padding: 15px; background-color: #003366; color: white; font-size: 1.1rem; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        #result-area { display: none; margin-top: 30px; padding: 30px; border: 2px solid #003366; border-radius: 10px; text-align: center; }
+        .score-num { font-size: 3rem; font-weight: bold; color: #d32f2f; }
+        .analysis-box { background: #f8f9fa; padding: 20px; border-radius: 10px; text-align: left; margin-top: 20px; }
+        .progress-container { height: 12px; background: #e9ecef; border-radius: 6px; margin: 10px 0; overflow: hidden; }
+        .progress-bar { height: 100%; transition: width 1s; }
+        .correct-bg { background-color: #d4edda !important; border-color: #28a745 !important; }
+        .wrong-bg { background-color: #f8d7da !important; border-color: #dc3545 !important; }
+        .feedback { display: none; margin-top: 10px; padding: 10px; border-radius: 4px; font-size: 0.9rem; border-left: 4px solid #666; background: #eee; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>✈️ HKIAA 学员单飞前必知必会测验</h1>
+    <div class="subtitle">广汉分院 SR20 专用 · 智能随机抽取 20 题 · 16 题合格</div>
+    
+    <div class="info-section">
+        <div class="input-group">
+            <label>学员姓名:</label>
+            <input type="text" id="studentName" placeholder="请输入姓名以开始测验">
+        </div>
+    </div>
+
+    <form id="quiz-form"></form>
+
+    <button type="button" class="btn-submit" onclick="submitQuiz()">提交试卷并分析缺陷</button>
+
+    <div id="result-area">
+        <div id="res-name" style="font-size: 1.4rem; font-weight: bold;"></div>
+        <div class="score-num" id="score-display">0 / 20</div>
+        <div id="res-msg" style="font-weight: bold; margin: 10px 0;"></div>
+        
+        <div class="analysis-box">
+            <h3 style="margin-top:0">📊 板块缺陷分析</h3>
+            <div id="analysis-content"></div>
+        </div>
+        <button onclick="window.location.reload()" style="margin-top:20px; padding:10px; cursor:pointer">换一套题目重新练习</button>
+    </div>
+</div>
+
+<script>
+    // 完整 50 题题库
+    const pool = [
+        // A: 资质与规章 (12题)
+        { cat: "资质与规章", q: "香港学员实施首次单飞前的飞机训练时间（含技术检查）至少达到多少小时？", opts: ["20.5h", "23.5h", "25h", "29h"], ans: 1, r: "根据广汉分院管理程序，香港学员最低单飞经历要求为 23.5 小时。" },
+        { cat: "资质与规章", q: "首次单飞前，在飞机上的着陆次数累计不得少于多少次？", opts: ["50次", "60次", "70次", "80次"], ans: 2, r: "程序要求不少于 70 次着陆以确保操纵熟练度。" },
+        { cat: "资质与规章", q: "首次单飞前，教员应在何处完成对学生的资质确认签注？", opts: ["云执照", "纸质 Logbook 或训练记录", "身份证背面", "不需要签注"], ans: 1, r: "香港学员使用纸质飞行经历记录本（Logbook）进行签注。" },
+        { cat: "资质与规章", q: "针对单飞的专项培训教育需在首次单飞前多少天内完成？", opts: ["7天", "15天", "30天", "60天"], ans: 2, r: "单飞教育有效期为 30 个日历日。" },
+        { cat: "资质与规章", q: "单飞前理论考试必须包含哪三个板块？", opts: ["气象、地理、数学", "规章、本场程序、机型性能", "CAPS、发动机、空速", "跳伞、滑行、通信"], ans: 1, r: "这是 CCAR-141 及分院程序规定的核心考核内容。" },
+        { cat: "资质与规章", q: "在滑行、起飞和着陆期间，机组人员必须系好哪些装置？", opts: ["安全带", "安全带和肩带", "救生衣", "耳机"], ans: 1, r: "起降阶段必须全程使用安全带和肩带约束。" },
+        { cat: "资质与规章", q: "白天 VFR 飞行应确保抵达目的地后仍能飞行多久的燃油量？", opts: ["15分钟", "30分钟", "45分钟", "60分钟"], ans: 1, r: "白天 VFR 最低燃油储备要求为抵达后仍能飞 30 分钟。" },
+        { cat: "资质与规章", q: "两架航空器在同一高度对头相遇，避让原则是什么？", opts: ["各自向左转", "各自向右转", "加速爬升", "由塔台决定"], ans: 1, r: "对头相遇避让规则是各自向右避让。" },
+        { cat: "资质与规章", q: "超越航空器时，应当从哪一侧通过？", opts: ["左侧", "右侧", "上方", "下方"], ans: 1, r: "超越机应当从被超越机的右侧通过。" },
+        { cat: "资质与规章", q: "两架飞机同时进近着陆，优先权属于谁？", opts: ["高度较高的", "高度较低的", "速度较快的", "油量较少的"], ans: 1, r: "低高度飞机在进近着陆阶段拥有更高优先权。" },
+        { cat: "资质与规章", q: "在人口稀少区上空，航空器不得接近人员或建筑物至多少米以内？", opts: ["50米", "100米", "150米", "300米"], ans: 2, r: "最低安全高度规定为 150 米（500英尺）。" },
+        { cat: "资质与规章", q: "在危及安全的紧急情况下，谁拥有最终决定权？", opts: ["塔台管制员", "责任教师", "机长 (PIC)", "机场领导"], ans: 2, r: "机长对航空器运行负最终责任并有最终决定权。" },
+
+        // B: 本场程序与天气 (13题)
+        { cat: "本场程序与天气", q: "广汉分院首次单飞实况的地面风速最大不能超过多少？", opts: ["3m/s", "5m/s", "8m/s", "10m/s"], ans: 0, r: "首次单飞地面风限制非常严格，不得超过 3m/s。" },
+        { cat: "本场程序与天气", q: "广汉分院首次单飞的侧风分量限制是多少？", opts: ["1m/s", "2m/s", "3m/s", "5m/s"], ans: 1, r: "首次单飞侧风限制为 2m/s。" },
+        { cat: "本场程序与天气", q: "首次单飞的顺风分量限制是多少？", opts: ["1m/s", "2m/s", "3m/s", "5m/s"], ans: 0, r: "首次单飞顺风限制为 1m/s。" },
+        { cat: "本场程序与天气", q: "实施单飞的最低能见度要求是多少？", opts: ["3km", "5km", "8km", "10km"], ans: 1, r: "单飞气象标准要求能见度不低于 5km。" },
+        { cat: "本场程序与天气", q: "实施单飞的最低云高要求是多少？", opts: ["300m", "450m", "600m", "1000m"], ans: 2, r: "单飞气象标准要求云高不低于 600m。" },
+        { cat: "本场程序与天气", q: "单飞前，为防止座椅滑动，飞行箱应建议放在何处？", opts: ["行李舱", "右座后方", "左座后方", "副驾驶脚下"], ans: 2, r: "放在左座后方可物理阻止座椅向后意外滑动。" },
+        { cat: "本场程序与天气", q: "单飞起飞时，为什么必须使用全跑道起飞？", opts: ["教员要求", "省油", "获得最大安全余量", "管制习惯"], ans: 2, r: "全跑道起飞能提供最长的剩余跑道处理中断起飞。" },
+        { cat: "本场程序与天气", q: "首次单飞的第一圈起落航线必须执行什么科目？", opts: ["全停", "复飞训练", "低空通场", "点落"], ans: 1, r: "程序强制要求第一圈必须执行复飞训练。" },
+        { cat: "本场程序与天气", q: "单飞中发现五边不稳定或入口条件不满足，应如何做？", opts: ["强行修正", "立即复飞", "报告塔台等待指令", "关闭发动机"], ans: 1, r: "不稳定进近必须果断复飞。" },
+        { cat: "本场程序与天气", q: "未获许可前，飞机的哪一部分不能越过跑道等待线？", opts: ["主轮", "前轮", "机头任何部位", "垂直尾翼"], ans: 2, r: "机头任何部位都不得逾越跑道等待位置标志。" },
+        { cat: "本场程序与天气", q: "广汉滑行道中线标志是什么颜色的？", opts: ["白色", "黄色", "蓝色", "红色"], ans: 1, r: "滑行道中线标志为黄色。" },
+        { cat: "本场程序与天气", q: "广汉滑行道边灯是什么颜色的？", opts: ["白色", "黄色", "蓝色", "绿色"], ans: 2, r: "滑行道边灯为蓝色恒光灯。" },
+        { cat: "本场程序与天气", q: "跑道号码（如 13）代表什么物理量？", opts: ["海拔高度", "磁方位角的1/10", "跑道长度", "机场代码"], ans: 1, r: "跑道号码取自跑道磁方位角的十分位整数。" },
+
+        // C: 机型性能与系统 (13题)
+        { cat: "机型性能与系统", q: "SR20 在 0% 襟翼着陆时的最后进近速度是多少？", opts: ["80 KIAS", "84 KIAS", "89 KIAS", "95 KIAS"], ans: 2, r: "无襟翼着陆速度卡组：0% 对应 89 KIAS。" },
+        { cat: "机型性能与系统", q: "SR20 在 50% 襟翼着陆时的最后进近速度是多少？", opts: ["78 KIAS", "80 KIAS", "84 KIAS", "89 KIAS"], ans: 2, r: "标准进近速度卡组：50% 对应 84 KIAS。" },
+        { cat: "机型性能与系统", q: "SR20 在 100% 襟翼着陆时的最后进近速度是多少？", opts: ["78 KIAS", "80 KIAS", "84 KIAS", "89 KIAS"], ans: 0, r: "全襟翼着陆速度通常为 78 KIAS。" },
+        { cat: "机型性能与系统", q: "空速表白弧下限代表的速度是什么？", opts: ["Vs1", "Vso", "Vfe", "Vne"], ans: 1, r: "白弧下限是着陆构型失速速度 Vso。" },
+        { cat: "机型性能与系统", q: "最佳爬升率速度 Vy 的作用是什么？", opts: ["最短距离升至最高", "单位时间爬升最高", "省油", "最安静"], ans: 1, r: "Vy 保证在单位时间内获得最大的垂直升高度。" },
+        { cat: "机型性能与系统", q: "空速表绿弧上限代表的速度是什么？", opts: ["Vfe", "Vno", "Vne", "Va"], ans: 1, r: "绿弧上限是最大结构巡航速度 Vno。" },
+        { cat: "机型性能与系统", q: "冬季（低气温/高密度）对 SR20 起飞滑跑有何影响？", opts: ["滑跑变长", "滑跑变短", "没有影响", "容易爆胎"], ans: 1, r: "冬季空气密度高，升力和推力增加，起飞滑跑变短。" },
+        { cat: "机型性能与系统", q: "如果 PFD 和 MFD 白天太暗，首先检查什么？", opts: ["电瓶电量", "白天面板灯光设置", "显示器寿命", "发电机"], ans: 1, r: "首先确认 Panel Light 或白天显示亮度设置未被误关。" },
+        { cat: "机型性能与系统", q: "飞机重心位置靠后时，其纵向稳定性如何变化？", opts: ["变强", "变弱", "不变", "更安全"], ans: 1, r: "重心靠后会削弱飞机的纵向稳定性，失速更难改出。" },
+        { cat: "机型性能与系统", q: "在 60 度坡度转弯中，飞机的载荷因数（G值）是多少？", opts: ["1.41G", "1.5G", "2G", "3G"], ans: 2, r: "60度坡度平飞转弯对应 2G 载荷。" },
+        { cat: "机型性能与系统", q: "皮托管气压孔完全堵塞（排水孔未堵），空速表指示？", opts: ["保持不变", "降至零", "飞速上升", "显示高度"], ans: 1, r: "这种情况下差压计测不到冲压，空速指示归零。" },
+        { cat: "机型性能与系统", q: "地面效应（Ground Effect）主要影响什么？", opts: ["增加阻力", "减小诱导阻力", "降低升力", "增加风噪"], ans: 1, r: "地面效应由于地面对下洗流的阻碍，减小了诱导阻力。" },
+        { cat: "机型性能与系统", q: "SR20 襟翼操作的限制区域在空速表哪种颜色弧线？", opts: ["白弧", "绿弧", "黄弧", "红弧"], ans: 0, r: "白弧代表襟翼操作速度范围。" },
+
+        // D: 应急处置与人为因素 (12题)
+        { cat: "应急处置与人为因素", q: "起飞后低高度发动机失效，核心原则是什么？", opts: ["立即回转返场", "前方30度选择着陆场", "直接跳伞", "寻找教员指令"], ans: 1, r: "低高度严禁强行回转，应在正前方 30 度扇区内择机迫降。" },
+        { cat: "应急处置与人为因素", q: "滑行至跑道头时，能否仅以风向袋状态决定起飞？", opts: ["可以", "不行，需向管制确认风速", "风向袋坏了才问", "看心情"], ans: 1, r: "风向袋仅供参考，单飞必须获取管制提供的实时风向风速数据。" },
+        { cat: "应急处置与人为因素", q: "着陆接地后发生跳起（Bouncing），应如何处置？", opts: ["猛推杆", "拉杆到底", "适量加力补偿姿态，必要时复飞", "不理会"], ans: 2, r: "处理跳起应稳住姿态并加力，严重时果断复飞。" },
+        { cat: "应急处置与人为因素", q: "起飞阶段舱门弹开，第一要务（First Priority）是什么？", opts: ["立刻关门", "保持飞机姿态/速度 (Fly airplane)", "向教员求救", "大喊大叫"], ans: 1, r: "Aviate 先于一切，先控制好飞机，再处理舱门。" },
+        { cat: "应急处置与人为因素", q: "产生螺旋（Spin）的物理条件是？", opts: ["单纯失速", "失速且伴随不协调(侧滑)", "超速转弯", "低高度大坡度"], ans: 1, r: "没有失速就没有螺旋，且必须伴随不平衡的力矩（侧滑）。" },
+        { cat: "应急处置与人为因素", q: "尾随大飞机（如A320）起飞，应在何处抬轮？", opts: ["比大飞机晚", "在大飞机离地点之前", "跑道尽头", "不重要"], ans: 1, r: "应在前方重型机离地点之前抬轮，并保持在其轨迹上方。" },
+        { cat: "应急处置与人为因素", q: "中型机后的单飞尾流间隔要求是多少？", opts: ["1分钟", "2分钟", "5分钟", "10分钟"], ans: 1, r: "标准尾流间隔为 2 分钟。" },
+        { cat: "应急处置与人为因素", q: "香港学生单飞前必须评估哪项 FTD 紧急科目？", opts: ["双发失效", "CAPS 使用", "越洋领航", "起落架故障"], ans: 1, r: "FTD03 明确要求进行 CAPS 使用训练评估。" },
+        { cat: "应急处置与人为因素", q: "侧风过大或跑道有障碍属于哪种 TEM 概念？", opts: ["差错 Error", "威胁 Threat", "非期望状态 UAS", "安全裕度"], ans: 1, r: "超出机组控制的外部客观不利因素统称为威胁 (Threat)。" },
+        { cat: "应急处置与人为因素", q: "进近过程中位置偏差属于哪种 TEM 概念？", opts: ["环境威胁", "机组差错 Error", "非期望状态 UAS", "完美状态"], ans: 2, r: "由于操纵或判断失误导致的飞行轨迹偏差属于 UAS。" },
+        { cat: "应急处置与人为因素", q: "五边进近不稳定时，学生应如何做？", opts: ["尽量修正", "继续下降", "果断执行复飞程序", "闭眼降落"], ans: 2, r: "进近不稳定是复飞的强制条件。" },
+        { cat: "应急处置与人为因素", q: "确认学生身心状态是否适合单飞的最终责任人是？", opts: ["学生本人", "责任教员", "塔台管制员", "家属"], ans: 1, r: "责任教员负责最后关口的签字与确认。" }
+    ];
+
+    let currentTest = [];
+
+    // 初始化测试：每板块抽 5 题
+    function initTest() {
+        const cats = ["资质与规章", "本场程序与天气", "机型性能与系统", "应急处置与人为因素"];
+        currentTest = [];
+        cats.forEach(c => {
+            const filtered = pool.filter(q => q.cat === c);
+            const shuffled = filtered.sort(() => 0.5 - Math.random());
+            currentTest.push(...shuffled.slice(0, 5));
+        });
+        currentTest.sort(() => 0.5 - Math.random());
+        render();
+    }
+
+    function render() {
+        const form = document.getElementById('quiz-form');
+        form.innerHTML = '';
+        currentTest.forEach((item, i) => {
+            const card = document.createElement('div');
+            card.className = 'question-card';
+            card.innerHTML = `
+                <div class="tag">${item.cat}</div>
+                <div class="question-text">${i + 1}. ${item.q}</div>
+                <div class="options">
+                    ${item.opts.map((o, oi) => `
+                        <label id="q${i}_o${oi}"><input type="radio" name="q${i}" value="${oi}"> ${String.fromCharCode(65+oi)}. ${o}</label>
+                    `).join('')}
+                </div>
+                <div class="feedback" id="fb${i}"></div>
+            `;
+            form.appendChild(card);
+        });
+    }
+
+    function submitQuiz() {
+        const name = document.getElementById('studentName').value;
+        if(!name) return alert("请输入姓名！");
+
+        let score = 0;
+        const stats = { "资质与规章": 0, "本场程序与天气": 0, "机型性能与系统": 0, "应急处置与人为因素": 0 };
+
+        currentTest.forEach((item, i) => {
+            const selected = document.querySelector(`input[name="q${i}"]:checked`);
+            const fb = document.getElementById(`fb${i}`);
+            fb.style.display = 'block';
+
+            if(selected && parseInt(selected.value) === item.ans) {
+                score++;
+                stats[item.cat]++;
+                fb.innerHTML = `<span style="color:green">✅ 正确。</span> ${item.r}`;
+                document.getElementById(`q${i}_o${item.ans}`).classList.add('correct-bg');
+            } else {
+                fb.innerHTML = `<span style="color:red">❌ 错误。</span> 正确答案是 ${String.fromCharCode(65+item.ans)}。${item.r}`;
+                if(selected) document.getElementById(`q${i}_o${selected.value}`).classList.add('wrong-bg');
+                document.getElementById(`q${i}_o${item.ans}`).classList.add('correct-bg');
+            }
+        });
+
+        showResult(name, score, stats);
+    }
+
+    function showResult(name, score, stats) {
+        document.getElementById('quiz-form').style.display = 'none';
+        document.querySelector('.btn-submit').style.display = 'none';
+        document.getElementById('result-area').style.display = 'block';
+        document.getElementById('res-name').innerText = name + " 的单飞前测验报告";
+        document.getElementById('score-display').innerText = score + " / 20";
+        
+        const msg = document.getElementById('res-msg');
+        if(score >= 16) {
+            msg.innerHTML = "<span style='color:green'>PASS 合格！您已具备单飞理论基础。</span>";
+        } else {
+            msg.innerHTML = "<span style='color:red'>FAIL 未通过！必须 16 题以上正确，请重点复习红色板块。</span>";
+        }
+
+        let analysisHtml = '';
+        for(let cat in stats) {
+            const scorePer = (stats[cat] / 5) * 100;
+            const color = scorePer >= 80 ? '#28a745' : (scorePer >= 60 ? '#ffc107' : '#dc3545');
+            analysisHtml += `
+                <div style="margin-bottom:15px">
+                    <div style="display:flex; justify-content:space-between">
+                        <b>${cat}</b> <span>${stats[cat]} / 5</span>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar" style="width:${scorePer}%; background-color:${color}"></div>
+                    </div>
+                </div>
+            `;
+        }
+        document.getElementById('analysis-content').innerHTML = analysisHtml;
+        window.scrollTo(0, 0);
+    }
+
+    window.onload = initTest;
+</script>
+</body>
+</html>
