@@ -1,467 +1,254 @@
 <!DOCTYPE html>
-<html lang="zh-HK">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HKIAA 学员单飞前必知必会测验</title>
+    <title>HKIAA Pre-Solo Knowledge Test (Full Bank)</title>
     <style>
-        /* --- 基础样式 --- */
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background-color: #f4f6f8; color: #333; line-height: 1.6; margin: 0; padding: 20px; }
-        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        /* --- 核心样式与打印适配 --- */
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f4f6f8; color: #333; line-height: 1.6; padding: 20px; }
+        .container { max-width: 850px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #003366; margin-bottom: 5px; }
+        .subtitle { text-align: center; color: #666; margin-bottom: 30px; border-bottom: 2px solid #003366; padding-bottom: 15px; font-size: 0.9rem; }
         
-        h1 { text-align: center; color: #003366; margin-bottom: 10px; font-size: 1.6rem; }
-        .subtitle { text-align: center; color: #666; margin-bottom: 30px; font-size: 0.95rem; border-bottom: 2px solid #003366; padding-bottom: 15px; }
-
-        /* 姓名输入区 */
         .info-section { background-color: #e8f4fd; padding: 20px; border-radius: 8px; margin-bottom: 30px; border-left: 5px solid #003366; }
-        .input-group label { font-weight: bold; color: #003366; margin-right: 10px; font-size: 1.1rem; }
-        .input-group input { padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 1rem; width: 60%; max-width: 300px; }
+        .input-group label { font-weight: bold; color: #003366; display: block; margin-bottom: 8px; }
+        .input-group input { padding: 10px; border: 1px solid #ccc; border-radius: 4px; width: 100%; box-sizing: border-box; }
 
-        /* 题目卡片 */
-        .question-card { margin-bottom: 25px; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px; background-color: #fff; transition: box-shadow 0.3s; break-inside: avoid; }
-        .question-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .question-card { margin-bottom: 25px; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px; background-color: #fff; break-inside: avoid; }
+        .tag { display: inline-block; background-color: #e8f0fe; color: #1967d2; padding: 3px 10px; border-radius: 4px; font-size: 0.75rem; margin-bottom: 10px; font-weight: bold; text-transform: uppercase; }
+        .question-text { font-size: 1.1rem; font-weight: 600; color: #2c3e50; margin-bottom: 15px; }
         
-        /* 题目标签 */
-        .tag { display: inline-block; background-color: #e8f0fe; color: #1967d2; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; margin-bottom: 8px; font-weight: bold; }
-
-        .question-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
-        .question-text { font-size: 1.1rem; font-weight: 600; color: #2c3e50; width: 80%; }
+        .options label { display: block; padding: 12px; margin-bottom: 8px; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; transition: 0.2s; }
+        .options label:hover { background-color: #f8f9fa; border-color: #003366; }
         
-        /* 提示按钮与区域 */
-        .btn-hint { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; padding: 5px 10px; font-size: 0.85rem; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.2s; white-space: nowrap; }
-        .btn-hint:hover { background-color: #ffeeba; }
-        .hint-box { display: none; margin-top: 10px; padding: 10px; background-color: #fffbf2; border-left: 3px solid #ffc107; color: #666; font-size: 0.9rem; font-style: italic; }
-
-        /* 选项 */
-        .options label { display: block; padding: 12px 15px; margin-bottom: 8px; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; transition: all 0.2s; position: relative; }
-        .options label:hover { background-color: #f8f9fa; border-color: #b0c4de; }
-        .options input { margin-right: 12px; transform: scale(1.2); }
-
-        /* 按钮组 */
-        .btn-submit { display: block; width: 100%; padding: 15px; background-color: #003366; color: white; font-size: 1.1rem; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: background 0.3s; }
-        .btn-submit:hover { background-color: #002244; }
-
-        /* 结果区域 */
-        #result-area { display: none; margin-top: 30px; padding: 30px; background-color: #fff; border-radius: 10px; border: 2px solid #003366; text-align: center; position: relative; }
-        .report-header { border-bottom: 1px dashed #ccc; padding-bottom: 15px; margin-bottom: 15px; }
-        .student-name-display { font-size: 1.5rem; font-weight: bold; color: #003366; margin-bottom: 5px; }
-        .report-date { color: #666; font-size: 0.9rem; }
-        .score-num { font-size: 3rem; font-weight: bold; color: #d32f2f; margin: 10px 0; }
-        .badge { display: inline-block; padding: 5px 15px; background: #003366; color: white; border-radius: 20px; font-size: 0.9rem; margin-top: 10px; }
+        .btn-submit { display: block; width: 100%; padding: 18px; background-color: #003366; color: white; font-size: 1.2rem; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 30px; }
         
-        /* 知识点分析条样式 */
-        .analysis-box { background: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 10px; padding: 20px; margin-top: 20px; text-align: left; }
-        .analysis-item { margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; }
-        .cat-name { font-weight: bold; width: 100%; margin-bottom: 5px; font-size: 0.95rem; color: #444; }
-        .progress-container { flex-grow: 1; height: 12px; background-color: #e9ecef; border-radius: 6px; margin-right: 15px; overflow: hidden; }
-        .progress-bar { height: 100%; border-radius: 6px; transition: width 1s ease-in-out; }
-        .status-tag { font-size: 0.85rem; font-weight: bold; min-width: 90px; text-align: right; }
+        /* 结果分析区样式 */
+        #result-area { display: none; margin-top: 30px; padding: 30px; border: 3px solid #003366; border-radius: 12px; text-align: center; }
+        .score-num { font-size: 3.5rem; font-weight: bold; color: #d32f2f; margin: 10px 0; }
+        .analysis-box { background: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 10px; padding: 25px; margin-top: 25px; text-align: left; }
+        .analysis-item { margin-bottom: 20px; }
+        .cat-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .cat-name { font-weight: bold; font-size: 1rem; color: #444; }
+        .cat-accuracy { font-size: 0.9rem; color: #666; font-weight: normal; }
+        
+        .progress-container { height: 14px; background-color: #e9ecef; border-radius: 7px; overflow: hidden; flex-grow: 1; margin: 0 15px; }
+        .progress-bar { height: 100%; transition: width 1s ease-in-out; }
+        .bar-wrapper { display: flex; align-items: center; justify-content: space-between; }
+        .status-tag { font-size: 0.85rem; font-weight: bold; width: 110px; text-align: right; }
 
-        /* 反馈样式 */
-        .feedback { display: none; margin-top: 15px; padding: 15px; background-color: #f8f9fa; border-radius: 6px; font-size: 0.95rem; text-align: left; }
-        .correct-bg { background-color: #d4edda !important; border-color: #c3e6cb !important; -webkit-print-color-adjust: exact; }
-        .wrong-bg { background-color: #f8d7da !important; border-color: #f5c6cb !important; -webkit-print-color-adjust: exact; }
-        .status-correct { color: #155724; font-weight: bold; margin-bottom: 5px; }
-        .status-wrong { color: #721c24; font-weight: bold; margin-bottom: 5px; }
-        .rationale { color: #555; margin-top: 5px; line-height: 1.5; }
+        .feedback { display: none; margin-top: 15px; padding: 15px; border-radius: 6px; font-size: 0.95rem; border-left: 5px solid #666; background: #f9f9f9; }
+        .correct-bg { background-color: #d4edda !important; border-color: #28a745 !important; }
+        .wrong-bg { background-color: #f8d7da !important; border-color: #dc3545 !important; }
 
-        /* 打印适配 */
         @media print {
-            .btn-submit, .btn-hint, .info-section { display: none; }
-            #result-area { display: block !important; border: 2px solid #000; page-break-after: always; }
-            .hint-box { display: none !important; }
-            .container { box-shadow: none; border: none; width: 100%; padding: 0; }
-            .question-card { break-inside: avoid; border-bottom: 1px solid #ccc; margin-bottom: 10px; }
-            .analysis-box { border: 1px solid #000; }
-            .progress-bar { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .btn-submit, .info-section { display: none; }
+            #result-area { display: block !important; page-break-after: always; }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>✈️ HKIAA 学员单飞前必知必会测验</h1>
-    <div class="subtitle">共 20 题 · 智能分析版 · 80分合格</div>
+    <h1>✈️ Pre-Solo Knowledge Test</h1>
+    <div class="subtitle">SR20 Operations | Stratified Sampling (20 Questions) | 80% to Pass</div>
     
     <div class="info-section">
         <div class="input-group">
-            <label for="studentName">学员姓名:</label>
-            <input type="text" id="studentName" placeholder="Please enter your name" required>
+            <label>Student Full Name:</label>
+            <input type="text" id="studentName" placeholder="Enter name to begin test">
         </div>
-        <div style="font-size: 0.85rem; color: #666; margin-top: 8px;">* 请输入姓名以生成包含知识点分析的成绩报告</div>
     </div>
 
-    <form id="quiz-form">
-        </form>
+    <form id="quiz-form"></form>
 
-    <button type="button" class="btn-submit" onclick="submitQuiz()">提交试卷 (Submit)</button>
+    <button type="button" class="btn-submit" onclick="submitQuiz()">Submit & Generate Analysis Report</button>
 
     <div id="result-area">
-        <div class="report-header">
-            <div class="student-name-display" id="report-name">Student Name</div>
-            <div class="report-date" id="report-date">Date: YYYY-MM-DD</div>
-        </div>
+        <div id="res-name" style="font-size: 1.6rem; font-weight: bold; color: #003366;"></div>
+        <div class="score-num" id="score-display">0%</div>
+        <div id="res-msg" style="font-size: 1.2rem; font-weight: bold; margin-bottom: 10px;"></div>
         
-        <div style="font-size: 1.1rem; color: #555;">单飞前测验成绩单</div>
-        <div class="score-num" id="score-display">0</div>
-        <div id="result-message" style="font-weight:bold; font-size: 1.1rem;"></div>
-        
-        <div id="pass-badge" class="badge" style="display:none;">PASS 合格</div>
-
         <div class="analysis-box">
-            <h3 style="margin-top:0; margin-bottom:15px; color:#333; border-bottom:1px solid #ddd; padding-bottom:10px;">📊 知识点掌握分析</h3>
+            <h3 style="margin-top:0; border-bottom:1px solid #ddd; padding-bottom:10px;">📊 Knowledge Deficit Analysis</h3>
             <div id="analysis-content"></div>
         </div>
-        
-        <p style="margin-top: 20px; font-size: 0.9rem; color: #666; text-align: center;">
-            (截图或打印此页面作为成绩证明)<br>
-            👇 请向下滚动查看详细错题解析
-        </p>
+        <button onclick="window.location.reload()" style="margin-top:25px; padding:12px 25px; cursor:pointer;">Generate New Random Test</button>
     </div>
 </div>
 
 <script>
-    // 20道题的完整数据，增加了 category 字段
-    const quizData = [
-        {
-            id: 1,
-            category: "气象标准 (Weather)",
-            question: "根据《大队单飞教育内容》，学员进行单飞训练时，地面风速（包含实况与预报）不得超过多少？",
-            options: ["5 米/秒", "8 米/秒", "10 米/秒", "12 米/秒"],
-            correct: 1,
-            hint: "请区分单飞学员与机长训练的风速标准，单飞的标准更为严格。",
-            rationale: "根据《大队单飞教育内容》第3点，单飞训练的地面风速标准为不超过 8 m/s（机长训练为 10 m/s）。"
-        },
-        {
-            id: 2,
-            category: "气象标准 (Weather)",
-            question: "对于SR-20机型，若POH规定的最大演示侧风分量为20节，根据大队规定，学员单飞时的侧风分量不得超过多少？",
-            options: ["5 节", "10 节", "15 节", "20 节"],
-            correct: 1,
-            hint: "大队规定单飞学员的侧风限制是机型最大演示侧风分量的1/2。",
-            rationale: "依据：单飞侧风分量不得超过POH/AFM中最大演示侧风分量的一半。20节的一半即为10节。"
-        },
-        {
-            id: 3,
-            category: "气象标准 (Weather)",
-            question: "根据《大队单飞教育内容》，学员在本场昼间进行目视飞行规则（VFR）单飞时，最低气象标准是什么？",
-            options: ["云高 ≥ 450米，能见度 ≥ 3公里", "云高 ≥ 600米，能见度 ≥ 5公里", "云高 ≥ 1000米，能见度 ≥ 8公里", "云高 ≥ 1000米，能见度 ≥ 10公里"],
-            correct: 1,
-            hint: "请回忆本场昼间飞行与转场或夜间飞行的气象标准区别。",
-            rationale: "依据：《大队单飞教育内容》第3点，本场昼间飞行的要求是云高 ≥ 600 m，能见度 ≥ 5 km。"
-        },
-        {
-            id: 4,
-            category: "飞行操纵与偏差 (Maneuvers)",
-            question: "在着陆过程中，如果飞机出现“拉飘”现象且高度超过2米，学员应采取什么措施？",
-            options: ["推杆修正，强行着陆", "保持姿态，等待飞机自然下沉", "果断复飞", "收光油门，通过左右蹬舵增加阻力"],
-            correct: 2,
-            hint: "当拉飘高度过高，修正变得困难且不安全时，最安全的选择是什么？",
-            rationale: "依据：上飘超过2m应果断复飞（加油门、看好地面、稳住杆）。推杆或盲目等待可能导致重着陆。"
-        },
-        {
-            id: 5,
-            category: "法规与限制 (Regulations)",
-            question: "根据《大队单飞教育内容》，在单飞前12小时内禁止什么行为？",
-            options: ["剧烈运动", "饮用咖啡", "饮酒或含有酒精的饮料", "观看电子屏幕"],
-            correct: 2,
-            hint: "这是一种会严重影响飞行员判断力和反应能力的生理摄入行为。",
-            rationale: "依据：第2.2条“禁止的行为”，飞行前12小时内禁止饮酒或含有酒精的饮料。"
-        },
-        {
-            id: 6,
-            category: "SR-20系统与特情 (SR-20/Emergency)",
-            question: "如果SR-20飞机的舱门在飞行中意外弹开，学员应如何处置？",
-            options: ["立即解开安全带，尝试用力关闭舱门", "保持飞机状态，调整空速（90-95节），报告管制并尽快着陆", "立即执行CAPS程序", "进行急转弯以利用离心力关闭舱门"],
-            correct: 1,
-            hint: "舱门弹开主要影响噪音和心理，对飞行性能影响有限，首要任务是控制飞机。",
-            rationale: "依据：安全管控措施指出，本场飞行舱门意外弹开，应控制好飞机状态，调整飞机空速（光洁外形90-95节），报告管制并尽快着陆。"
-        },
-        {
-            id: 7,
-            category: "法规与限制 (Regulations)",
-            question: "根据《飞行运行手册》，由于天气原因、机械故障或学员心理、身体技术等原因，对继续执行飞行任务缺乏信心或不能继续执行时，学员应如何做？",
-            options: ["自行决定改变航线飞往备降场", "坚持完成任务以通过考核", "报告指挥员（教员）", "在空中盘旋直到状态好转"],
-            correct: 2,
-            hint: "在飞行训练中，沟通和决断是关键，遇到无法处理的情况应寻求地面支持。",
-            rationale: "依据：《飞行运行手册》3.4.3 E.d章节，教员/学员应在缺乏信心或不能继续时报告指挥员。"
-        },
-        {
-            id: 8,
-            category: "法规与限制 (Regulations)",
-            question: "根据《大队单飞教育内容》及CCAR-61部要求，单飞学员严禁实施以下哪种行为？",
-            options: ["在教员监督下进行起落航线飞行", "搭载其他成员", "使用无线电与塔台通话", "在目视气象条件下飞行"],
-            correct: 1,
-            hint: "学生驾驶员执照的限制之一是关于“载人”的规定。",
-            rationale: "依据：《大队单飞教育内容》2.2条及CCAR-61部要求，学生驾驶员单飞时禁止搭载其他成员（包括旅客或其他学员）。"
-        },
-        {
-            id: 9,
-            category: "SR-20系统与特情 (SR-20/Emergency)",
-            question: "关于SR-20 G6飞机的CAPS（整机降落伞系统）启动，建议的决断高度是多少？",
-            options: ["真高 500 英尺", "真高 1000 英尺", "真高 2000 英尺", "真高 5000 英尺"],
-            correct: 2,
-            hint: "这个高度是系统评估紧急情况和必须立即启动CAPS的分界线。",
-            rationale: "依据：《大队单飞教育内容》SR-20机型特点部分，将真高2000英尺作为决断高度是非常有用的。在此高度以下必须立即做出决定。"
-        },
-        {
-            id: 10,
-            category: "飞行操纵与偏差 (Maneuvers)",
-            question: "在着陆过程中发生“海豚跳”（连续跳跃），学员应采取的最安全措施是什么？",
-            options: ["用力推杆制止跳跃", "稳住杆不动", "加油门复飞，同时稳住杆（绷住）", "完全收光油门并拉杆到底"],
-            correct: 2,
-            hint: "当着陆变得不稳定且危险时，唯一的出路是回到空中。",
-            rationale: "依据：海豚跳或连续跳跃时应果断复飞，动作要领是加油门、稳住杆（绷住）。推杆会导致更严重的跳跃或前轮折断。"
-        },
-        {
-            id: 11,
-            category: "SR-20系统与特情 (SR-20/Emergency)",
-            question: "根据《飞行运行手册》，如果在飞行中无线电通信完全失效，且在目视飞行规则（VFR）条件下，学员应当：",
-            options: ["立即在此处盘旋等待救援", "保持VFR飞行，飞往最近的合适机场并尽快着陆", "盲目上升高度寻找信号", "按原计划继续飞行直到目的地"],
-            correct: 1,
-            hint: "在失去联络且天气良好的情况下，首要任务是安全落地。",
-            rationale: "依据：《飞行运行手册》3.9.6 B条款，在目视飞行时，应保持VFR飞行，选择最近机场并尽快着陆。"
-        },
-        {
-            id: 12,
-            category: "SR-20系统与特情 (SR-20/Emergency)",
-            question: "单飞学员在飞行中误触ELT（应急定位发射机）开关导致其发射信号，正确的复位操作是：",
-            options: ["不做任何处理", "将远距开关置于ON位1秒后再扳回ARM位", "立即关闭飞机总电源", "通过无线电呼叫塔台请求关闭"],
-            correct: 1,
-            hint: "复位ELT需要一个特定的开关操作序列。",
-            rationale: "依据：《大队单飞教育内容》ELT防误触专项培训，发射机激活后的复位操作是将远距开关置于“ON”位，1秒后再扳回“ARM”位。"
-        },
-        {
-            id: 13,
-            category: "法规与限制 (Regulations)",
-            question: "根据《飞行运行手册》，两架飞机在同一高度对头相遇时，应如何避让？",
-            options: ["各自向左转", "各自向右转，保持500米以上间隔", "上升高度避让", "下降高度避让"],
-            correct: 1,
-            hint: "航空避让规则通常遵循“右行”原则。",
-            rationale: "依据：《飞行运行手册》3.2.8 C条款，对头相遇时，各自向右转，保持500米以上间隔。"
-        },
-        {
-            id: 14,
-            category: "SR-20系统与特情 (SR-20/Emergency)",
-            question: "单飞学员在起飞滑跑阶段，如果遇到舱门意外弹开，应采取什么措施？",
-            options: ["若剩余跑道足够，应中断起飞", "无论跑道长短，必须强行起飞", "一边滑跑一边尝试关门", "立即拉杆离地"],
-            correct: 0,
-            hint: "在地面发现问题且有条件停下来时，最安全的选择是什么？",
-            rationale: "依据：《大队单飞教育内容》管控措施，起飞滑跑阶段舱门弹开，若剩余跑道足够应中断起飞。"
-        },
-        {
-            id: 15,
-            category: "法规与限制 (Regulations)",
-            question: "根据《飞行运行手册》，单飞学员在目视飞行（VFR）时，关于云的限制是：",
-            options: ["可以短时间进入云中", "可以飞越云层上方", "严禁飞入云中", "只要能见度好，进云也没关系"],
-            correct: 2,
-            hint: "单飞是基于目视参考的飞行，失去目视参考（入云）是严格禁止的。",
-            rationale: "依据：《大队单飞教育内容》2.2条及CCAR-61部限制，禁止飞入云中，必须保持目视地标。"
-        },
-        {
-            id: 16,
-            category: "法规与限制 (Regulations)",
-            question: "在单飞训练中，以下哪项行为是被大队明确禁止的？",
-            options: ["在规定的空域内做大坡度盘旋（非特技）", "执行机动科目", "练习正常的起落航线", "使用检查单"],
-            correct: 1,
-            hint: "单飞的主要目的是巩固起降和基本操纵，复杂的机动动作往往被禁止以确保安全。",
-            rationale: "依据：《大队单飞教育内容》1.1条：严令禁止大队单飞学员在过程中执行机动科目。"
-        },
-        {
-            id: 17,
-            category: "SR-20系统与特情 (SR-20/Emergency)",
-            question: "根据《飞行运行手册》，如果在地面滑行时发生由于人为操作失误导致ELT发射，机务人员在无法通过开关复位时，可采取的最终手段是：",
-            options: ["切断飞机燃油", "拆除ELT电池", "用金属罩遮挡天线", "等待电池耗尽"],
-            correct: 1,
-            hint: "这是物理切断电源的最后手段，通常由机务执行。",
-            rationale: "依据：《大队单飞教育内容》ELT部分，当上述方法失效时，可通过拆除ELT电池关闭发射机（仅适用于机务人员）。"
-        },
-        {
-            id: 18,
-            category: "飞行操纵与偏差 (Maneuvers)",
-            question: "根据《大队单飞教育内容》，在着陆偏差修正中，如果发现飞机有“拉平高”的趋势，应如何处置？",
-            options: ["快速推杆寻找地面", "适当减慢或停止带杆，使飞机在1米高度拉平", "立即拉杆到底", "收油门并蹬舵"],
-            correct: 1,
-            hint: "修正是为了让飞机回到正确的拉平高度，而不是粗猛地改变姿态。",
-            rationale: "依据：《大队单飞教育内容》着陆偏差教学，发现拉平高趋势应适当减慢或停止带杆，使飞机仍在1米的高度上拉平。"
-        },
-        {
-            id: 19,
-            category: "法规与限制 (Regulations)",
-            question: "根据《飞行运行手册》，单飞学员必须随身携带的证件包括：",
-            options: ["身份证和学生证", "执照与有效体检合格证", "飞行记录本和机型手册", "驾驶执照（汽车）"],
-            correct: 1,
-            hint: "这是证明你具备飞行资格和身体条件的法律文件。",
-            rationale: "依据：CCAR-61及《大队单飞教育内容》，单飞期间学生必须随身携带执照与体检合格证。"
-        },
-        {
-            id: 20,
-            category: "飞行操纵与偏差 (Maneuvers)",
-            question: "根据《大队单飞教育内容》，如果飞机在五边进近时出现拉平低（开始拉平时高度低于0.75米），应防止出现什么后果？",
-            options: ["飞机复飞", "飞机在刚结束拉平时飘起", "飞机冲出跑道", "飞机提前接地"],
-            correct: 1,
-            hint: "因为拉平低时通常带杆较快，容易导致飞机的升力突然增加而上升。",
-            rationale: "依据：《大队单飞教育内容》着陆偏差教学，拉平低时修正动作（带杆）快，应防止飞机在刚结束拉平时飘起。"
-        }
+    const pool = [
+        // A: Regs & Qualifications (12 Questions)
+        { cat: "Regs & Qualifications", q: "What is the minimum flight time required for HK students before the first solo?", opts: ["20.5h", "23.5h", "25h", "29h"], ans: 1, r: "Per ZUGH program, HK students require at least 23.5 dual/check hours." },
+        { cat: "Regs & Qualifications", q: "How many landings in the aircraft are required minimum before solo?", opts: ["50", "60", "70", "80"], ans: 2, r: "At least 70 landings must be documented in the training record." },
+        { cat: "Regs & Qualifications", q: "Where must the pre-solo endorsement be signed for HKIAA students?", opts: ["Cloud App", "Physical Logbook/Training Record", "Pilot License", "Email"], ans: 1, r: "Instructor must sign the physical Logbook or Training Record for HK students." },
+        { cat: "Regs & Qualifications", q: "Pre-solo education training is valid for how many calendar days?", opts: ["7", "14", "30", "60"], ans: 2, r: "The endorsement is valid for 30 days." },
+        { cat: "Regs & Qualifications", q: "Who is responsible for determining if the aircraft is in condition for safe flight?", opts: ["Mechanic", "Owner", "Pilot-in-Command (PIC)", "ATC"], ans: 2, r: "The PIC is the final authority on the aircraft's airworthiness for that flight." },
+        { cat: "Regs & Qualifications", q: "What is the minimum fuel reserve for VFR Day flight?", opts: ["15m", "30m", "45m", "60m"], ans: 1, r: "Enough fuel to reach destination plus 30 mins at normal cruise." },
+        { cat: "Regs & Qualifications", q: "Head-on collision avoidance requires both aircraft to?", opts: ["Turn Left", "Turn Right", "Climb", "Descend"], ans: 1, r: "Both must alter course to the right." },
+        { cat: "Regs & Qualifications", q: "Who has the right-of-way when overtaking?", opts: ["Overtaking aircraft", "Aircraft being overtaken", "Faster aircraft", "Lower aircraft"], ans: 1, r: "The aircraft being overtaken has the right-of-way." },
+        { cat: "Regs & Qualifications", q: "What restraints are mandatory during taxi, takeoff, and landing?", opts: ["Seatbelt only", "Shoulder harness only", "Both seatbelt and shoulder harness", "None"], ans: 2, r: "Both must be fastened for all crew members." },
+        { cat: "Regs & Qualifications", q: "Minimum safe altitude over congested areas (horizontal 600m radius)?", opts: ["500ft", "1000ft above highest obstacle", "2000ft", "3000ft"], ans: 1, r: "1000ft (300m) above the highest obstacle." },
+        { cat: "Regs & Qualifications", q: "Which document must a student pilot carry for solo?", opts: ["Library card", "Medical certificate and Logbook with endorsement", "ID only", "Birth certificate"], ans: 1, r: "Must carry Pilot Certificate, Medical, and Logbook with current endorsement." },
+        { cat: "Regs & Qualifications", q: "Can a student pilot carry passengers?", opts: ["Yes, if instructor agrees", "No, strictly prohibited", "Only family", "Only other students"], ans: 1, r: "Student pilots are strictly prohibited from carrying passengers." },
+
+        // B: Procedures & Weather (13 Questions)
+        { cat: "Procedures & Weather", q: "Max ground wind speed for first solo at ZUGH?", opts: ["3m/s", "5m/s", "8m/s", "10m/s"], ans: 0, r: "Strict limit of 3m/s for first solo." },
+        { cat: "Procedures & Weather", q: "Max crosswind component for first solo?", opts: ["1m/s", "2m/s", "3m/s", "5m/s"], ans: 1, r: "Crosswind must not exceed 2m/s." },
+        { cat: "Procedures & Weather", q: "Max tailwind component for first solo?", opts: ["0m/s", "1m/s", "2m/s", "3m/s"], ans: 1, r: "Tailwind must not exceed 1m/s." },
+        { cat: "Procedures & Weather", q: "Minimum visibility for solo flight?", opts: ["3km", "5km", "8km", "10km"], ans: 1, r: "Minimum 5km visibility required." },
+        { cat: "Procedures & Weather", q: "Minimum cloud ceiling for solo flight?", opts: ["300m", "450m", "600m", "1000m"], ans: 2, r: "Minimum 600m ceiling required." },
+        { cat: "Procedures & Weather", q: "Why use full runway length for takeoff?", opts: ["Standard habit", "To maximize stop distance in emergency", "ATC requirement", "Fuel saving"], ans: 1, r: "Provides maximum safety margin for an aborted takeoff." },
+        { cat: "Procedures & Weather", q: "First lap of first solo must be a?", opts: ["Full stop", "Touch and go", "Go-around", "Low pass"], ans: 2, r: "Mandatory go-around to verify conditions/safety." },
+        { cat: "Procedures & Weather", q: "What color is the taxiway centerline?", opts: ["White", "Yellow", "Blue", "Green"], ans: 1, r: "センターライン (Centerline) is solid yellow." },
+        { cat: "Procedures & Weather", q: "Taxiway edge lights color?", opts: ["White", "Yellow", "Blue", "Green"], ans: 2, r: "Edge lights are blue." },
+        { cat: "Procedures & Weather", q: "Before takeoff clearance, aircraft part must not cross?", opts: ["Main gear", "Nose gear", "Hold-short line", "Edge line"], ans: 2, r: "Must not cross the hold-short line." },
+        { cat: "Procedures & Weather", q: "Runway number 13 represents?", opts: ["Elevation", "130 degrees magnetic approx", "1300m length", "Frequency"], ans: 1, r: "Based on magnetic azimuth." },
+        { cat: "Procedures & Weather", q: "Where to place flight bag to prevent seat slip?", opts: ["Trunk", "Behind right seat", "Behind left seat", "Footwell"], ans: 2, r: "Behind left seat acts as a physical block." },
+        { cat: "Procedures & Weather", q: "What should you do if wind cone shows tailwind on final?", opts: ["Ignore it", "Confirm wind with ATC immediately", "Land anyway", "Panic"], ans: 1, r: "Always confirm official wind data with ATC." },
+
+        // C: Performance & Systems (13 Questions)
+        { cat: "Performance & Systems", q: "SR20 final approach speed with 0% Flaps?", opts: ["80 KIAS", "84 KIAS", "89 KIAS", "95 KIAS"], ans: 2, r: "Manual speed for 0% flaps is 89 KIAS." },
+        { cat: "Performance & Systems", q: "SR20 final approach speed with 50% Flaps?", opts: ["78 KIAS", "80 KIAS", "84 KIAS", "89 KIAS"], ans: 2, r: "Manual speed for 50% flaps is 84 KIAS." },
+        { cat: "Performance & Systems", q: "Airspeed indicator white arc bottom?", opts: ["Vs1", "Vso", "Vfe", "Vne"], ans: 1, r: "Vso: Stalling speed landing config." },
+        { cat: "Performance & Systems", q: "Best rate of climb speed (Vy) purpose?", opts: ["Most altitude in distance", "Most altitude in time", "Safety", "Speed"], ans: 1, r: "Greatest altitude gain per unit of time." },
+        { cat: "Performance & Systems", q: "Airspeed indicator green arc top?", opts: ["Vfe", "Vno", "Vne", "Va"], ans: 1, r: "Vno: Max structural cruising speed." },
+        { cat: "Performance & Systems", q: "Winter air (low density altitude) effect on takeoff?", opts: ["Longer roll", "Shorter roll", "No change", "Less power"], ans: 1, r: "Denser air improves lift/thrust, shortening ground roll." },
+        { cat: "Performance & Systems", q: "If PFD/MFD screens too dark in daylight, check?", opts: ["Battery", "Panel Light/Dimmer settings", "Alternator", "Circuit breakers"], ans: 1, r: "Usually caused by accidental dimming of panel lights." },
+        { cat: "Performance & Systems", q: "Aft CG effect on stability?", opts: ["More stable", "Less stable", "No change", "Easier stall recovery"], ans: 1, r: "Decreases longitudinal stability." },
+        { cat: "Performance & Systems", q: "Load factor in 60-degree bank level turn?", opts: ["1.41G", "1.5G", "2G", "3G"], ans: 2, r: "60-degree bank = 2.0 Gs." },
+        { cat: "Performance & Systems", q: "Blocked Pitot tube (open drain) effect?", opts: ["Constant speed", "Drop to zero", "Max speed", "Accurate"], ans: 1, r: "Loss of ram air leads to zero airspeed indication." },
+        { cat: "Performance & Systems", q: "Ground Effect primary benefit?", opts: ["Less lift", "Reduced induced drag", "More drag", "Higher stall speed"], ans: 1, r: "Wingtip vortices are restricted by ground, reducing induced drag." },
+        { cat: "Performance & Systems", q: "Flap operating range is marked by which arc?", opts: ["White", "Green", "Yellow", "Red"], ans: 0, r: "White arc is flap range." },
+        { cat: "Performance & Systems", q: "Stall occurs when aircraft exceeds?", opts: ["Max speed", "Max altitude", "Critical Angle of Attack", "Max weight"], ans: 2, r: "Angle of attack is the only direct cause of stall." },
+
+        // D: Emergency & Human Factors (12 Questions)
+        { cat: "Emergency & Human Factors", q: "Engine fail low altitude after takeoff, priority?", opts: ["Turn back", "Land straight ahead (30 deg sector)", "Deploy CAPS", "Call tower"], ans: 1, r: "The 'impossible turn' should be avoided; land ahead." },
+        { cat: "Emergency & Human Factors", q: "How to handle a bounced landing?", opts: ["Push down", "Pull back", "Hold attitude, add power, Go-around if needed", "Brake hard"], ans: 2, r: "Stabilize first, add power to cushion, go around if severe." },
+        { cat: "Emergency & Human Factors", q: "Door opens during takeoff, first priority?", opts: ["Close it", "Maintain control (Fly Airplane)", "Report ATC", "Abandone"], ans: 1, r: "Always Aviate first. Fly the aircraft, then address the door." },
+        { cat: "Emergency & Human Factors", q: "Requirement for a spin?", opts: ["Speed", "Stall + Uncoordinated (Yaw)", "High bank", "Low fuel"], ans: 1, r: "A spin requires both a stall and a yawing moment." },
+        { cat: "Emergency & Human Factors", q: "Liftoff point behind large aircraft?", opts: ["After its point", "Before its point", "Runway end", "Same place"], ans: 1, r: "Rotate before its point and stay above its path." },
+        { cat: "Emergency & Human Factors", q: "Wake turbulence interval behind A320?", opts: ["1m", "2m", "5m", "10m"], ans: 1, r: "2 minutes for Medium category." },
+        { cat: "Emergency & Human Factors", q: "HK students must evaluate which FTD emergency?", opts: ["Gear fail", "CAPS Activation", "Icing", "Lost"], ans: 1, r: "FTD03 focuses on CAPS deployment training." },
+        { cat: "Emergency & Human Factors", q: "External unfavorable conditions in TEM are called?", opts: ["Errors", "Threats", "UAS", "Hazards"], ans: 1, r: "Threats are external factors beyond crew control." },
+        { cat: "Emergency & Human Factors", q: "Mandatory action for unstable approach?", opts: ["Fix it", "Continue", "Go-around", "Slow down"], ans: 2, r: "Mandatory go-around for safety." },
+        { cat: "Emergency & Human Factors", q: "Final person responsible for student solo fitness?", opts: ["Student", "Instructor", "ATC", "Mechanic"], ans: 1, r: "The instructor must verify readiness before signing." },
+        { cat: "Emergency & Human Factors", q: "Dizziness or tingling during flight may be?", opts: ["Hunger", "Hyperventilation", "Cold", "Sleepy"], ans: 1, r: "Symptoms of over-breathing (Hyperventilation)." },
+        { cat: "Emergency & Human Factors", q: "What is the 'Illusion of Speed' near ground?", opts: ["Slower", "Faster", "Stationary", "Blurry"], ans: 1, r: "Ground proximity makes the aircraft feel much faster than it is." }
     ];
 
-    // 渲染题目
-    const quizForm = document.getElementById('quiz-form');
-    
-    quizData.forEach((item, index) => {
-        const div = document.createElement('div');
-        div.className = 'question-card';
-        
-        let optionsHtml = '';
-        item.options.forEach((opt, optIndex) => {
-            optionsHtml += `
-                <label id="q${index}_opt${optIndex}">
-                    <input type="radio" name="q${index}" value="${optIndex}">
-                    ${String.fromCharCode(65 + optIndex)}. ${opt}
-                </label>
-            `;
+    let currentTest = [];
+
+    function initTest() {
+        const cats = ["Regs & Qualifications", "Procedures & Weather", "Performance & Systems", "Emergency & Human Factors"];
+        currentTest = [];
+        cats.forEach(c => {
+            const filtered = pool.filter(q => q.cat === c);
+            const shuffled = filtered.sort(() => 0.5 - Math.random());
+            currentTest.push(...shuffled.slice(0, 5));
         });
+        currentTest.sort(() => 0.5 - Math.random());
+        render();
+    }
 
-        div.innerHTML = `
-            <div class="tag">${item.category}</div>
-            <div class="question-header">
-                <div class="question-text">${index + 1}. ${item.question}</div>
-                <button type="button" class="btn-hint" onclick="toggleHint(${index})">💡 显示提示</button>
-            </div>
-            
-            <div class="hint-box" id="hint${index}">
-                <strong>提示：</strong>${item.hint}
-            </div>
-
-            <div class="options">${optionsHtml}</div>
-            
-            <div class="feedback" id="feedback${index}"></div>
-        `;
-        quizForm.appendChild(div);
-    });
-
-    function toggleHint(index) {
-        const hintBox = document.getElementById(`hint${index}`);
-        if (hintBox.style.display === 'block') {
-            hintBox.style.display = 'none';
-        } else {
-            hintBox.style.display = 'block';
-        }
+    function render() {
+        const form = document.getElementById('quiz-form');
+        form.innerHTML = '';
+        currentTest.forEach((item, i) => {
+            const card = document.createElement('div');
+            card.className = 'question-card';
+            card.innerHTML = `
+                <div class="tag">${item.cat}</div>
+                <div class="question-text">${i + 1}. ${item.q}</div>
+                <div class="options">
+                    ${item.opts.map((o, oi) => `
+                        <label id="q${i}_o${oi}"><input type="radio" name="q${i}" value="${oi}"> ${String.fromCharCode(65+oi)}. ${o}</label>
+                    `).join('')}
+                </div>
+                <div class="feedback" id="fb${i}"></div>
+            `;
+            form.appendChild(card);
+        });
     }
 
     function submitQuiz() {
-        // 1. 检查姓名
-        const nameInput = document.getElementById('studentName');
-        const nameVal = nameInput.value.trim();
-        if (!nameVal) {
-            alert("⚠️ 请先填写您的姓名 (Please enter your name first)!");
-            nameInput.focus();
-            nameInput.parentElement.style.border = "2px solid #d32f2f";
-            return;
-        } else {
-            nameInput.parentElement.style.border = "none";
-        }
+        const name = document.getElementById('studentName').value.trim();
+        if(!name) { alert("Please enter your name!"); return; }
 
         let score = 0;
-        let categoryStats = {};
+        const categoryStats = {};
 
-        // 2. 判分与统计逻辑
-        quizData.forEach((item, index) => {
-            // 初始化分类统计
-            if (!categoryStats[item.category]) {
-                categoryStats[item.category] = { total: 0, correct: 0 };
-            }
-            categoryStats[item.category].total++;
+        currentTest.forEach((item, i) => {
+            if(!categoryStats[item.cat]) categoryStats[item.cat] = { total: 0, correct: 0 };
+            categoryStats[item.cat].total++;
 
-            const selected = document.querySelector(`input[name="q${index}"]:checked`);
-            const feedbackEl = document.getElementById(`feedback${index}`);
-            
-            feedbackEl.style.display = 'block';
+            const selected = document.querySelector(`input[name="q${i}"]:checked`);
+            const fb = document.getElementById(`fb${i}`);
+            fb.style.display = 'block';
 
-            if (selected) {
-                const val = parseInt(selected.value);
-                if (val === item.correct) {
-                    score++;
-                    categoryStats[item.category].correct++;
-                    feedbackEl.innerHTML = `<div class="status-correct">✅ 回答正确</div><div class="rationale">${item.rationale}</div>`;
-                    document.getElementById(`q${index}_opt${val}`).classList.add('correct-bg');
-                } else {
-                    feedbackEl.innerHTML = `<div class="status-wrong">❌ 回答错误</div><div class="rationale">正确答案是：${String.fromCharCode(65 + item.correct)}。<br>${item.rationale}</div>`;
-                    document.getElementById(`q${index}_opt${val}`).classList.add('wrong-bg');
-                    document.getElementById(`q${index}_opt${item.correct}`).classList.add('correct-bg');
-                }
+            if(selected && parseInt(selected.value) === item.ans) {
+                score++;
+                categoryStats[item.cat].correct++;
+                fb.innerHTML = `<b style="color:#155724">✅ Correct.</b> ${item.r}`;
+                document.getElementById(`q${i}_o${item.ans}`).classList.add('correct-bg');
             } else {
-                feedbackEl.innerHTML = `<div class="status-wrong">⚠️ 未作答</div><div class="rationale">正确答案是：${String.fromCharCode(65 + item.correct)}。<br>${item.rationale}</div>`;
-                document.getElementById(`q${index}_opt${item.correct}`).classList.add('correct-bg');
+                fb.innerHTML = `<b style="color:#721c24">❌ Incorrect.</b> Correct answer: ${String.fromCharCode(65+item.ans)}. ${item.r}`;
+                if(selected) document.getElementById(`q${i}_o${selected.value}`).classList.add('wrong-bg');
+                document.getElementById(`q${i}_o${item.ans}`).classList.add('correct-bg');
             }
         });
 
-        // 3. 计算总分与显示基础信息
-        const finalScore = Math.round((score / quizData.length) * 100);
-        const resultArea = document.getElementById('result-area');
-        resultArea.style.display = 'block';
+        displayResults(name, score, categoryStats);
+    }
+
+    function displayResults(name, score, stats) {
+        document.getElementById('quiz-form').style.display = 'none';
+        document.querySelector('.btn-submit').style.display = 'none';
+        const resArea = document.getElementById('result-area');
+        resArea.style.display = 'block';
         
-        const now = new Date();
-        const dateStr = now.getFullYear() + "-" + (now.getMonth()+1).toString().padStart(2,'0') + "-" + now.getDate().toString().padStart(2,'0') + " " + now.getHours().toString().padStart(2,'0') + ":" + now.getMinutes().toString().padStart(2,'0');
+        const finalPercent = (score / 20) * 100;
+        document.getElementById('res-name').innerText = name + "'s Exam Report";
+        document.getElementById('score-display').innerText = finalPercent + "%";
         
-        document.getElementById('report-name').innerText = nameVal;
-        document.getElementById('report-date').innerText = `Time: ${dateStr}`;
-        document.getElementById('score-display').innerText = `${finalScore} 分`;
-        
-        const msgDisplay = document.getElementById('result-message');
-        const badge = document.getElementById('pass-badge');
-        
-        if (finalScore >= 80) {
-            msgDisplay.innerText = "🎉 恭喜！您已掌握单飞前的关键知识。";
-            msgDisplay.style.color = "#155724";
-            badge.style.display = "inline-block";
-            badge.style.backgroundColor = "#28a745";
-            badge.innerText = "PASS 合格";
+        const msg = document.getElementById('res-msg');
+        if(finalPercent >= 80) {
+            msg.innerHTML = "🎉 PASS! Excellent work. You have met the pre-solo knowledge requirements.";
+            msg.style.color = "#155724";
         } else {
-            msgDisplay.innerText = "⚠️ 成绩未达标，请重新复习错题，单飞安全不容有失。";
-            msgDisplay.style.color = "#d32f2f";
-            badge.style.display = "inline-block";
-            badge.style.backgroundColor = "#d32f2f";
-            badge.innerText = "FAIL 不合格";
+            msg.innerHTML = "⚠️ FAIL. You scored below 80%. Review the critical areas before your solo flight.";
+            msg.style.color = "#d32f2f";
         }
 
-        // 4. 生成知识点分析可视化条
         let analysisHtml = '';
-        for (let cat in categoryStats) {
-            const stat = categoryStats[cat];
+        for (let cat in stats) {
+            const stat = stats[cat];
             const accuracy = Math.round((stat.correct / stat.total) * 100);
-            
-            let color = '';
-            let statusText = '';
-            
-            if (stat.correct === stat.total) {
-                color = '#28a745'; // 绿色
-                statusText = '🌟 完全掌握';
-            } else if (accuracy >= 60) {
-                color = '#ffc107'; // 黄色
-                statusText = '🔨 需要巩固';
-            } else {
-                color = '#dc3545'; // 红色
-                statusText = '⚠️ 重点复习';
-            }
+            let color = accuracy >= 80 ? '#28a745' : (accuracy >= 60 ? '#ffc107' : '#dc3545');
+            let status = accuracy >= 80 ? '🌟 Mastered' : (accuracy >= 60 ? '🔨 Solidify' : '⚠️ Review');
 
             analysisHtml += `
                 <div class="analysis-item">
-                    <div class="cat-name">${cat} <span style="font-weight:normal; color:#888; font-size:0.85em; margin-left:5px;">(答对 ${stat.correct}/${stat.total})</span></div>
-                    <div class="progress-container">
-                        <div class="progress-bar" style="width: ${accuracy}%; background-color: ${color};"></div>
+                    <div class="cat-header">
+                        <span class="cat-name">${cat}</span>
+                        <span class="cat-accuracy">${accuracy}% (${stat.correct}/${stat.total})</span>
                     </div>
-                    <div class="status-tag" style="color: ${color};">${statusText}</div>
+                    <div class="bar-wrapper">
+                        <div class="progress-container">
+                            <div class="progress-bar" style="width: ${accuracy}%; background-color: ${color};"></div>
+                        </div>
+                        <div class="status-tag" style="color: ${color};">${status}</div>
+                    </div>
                 </div>
             `;
         }
         document.getElementById('analysis-content').innerHTML = analysisHtml;
-
-        // 禁用提交按钮并滚动
-        document.querySelector('.btn-submit').style.display = 'none';
-        resultArea.scrollIntoView({ behavior: 'smooth' });
+        window.scrollTo(0, 0);
     }
-</script>
 
+    window.onload = initTest;
+</script>
 </body>
 </html>
