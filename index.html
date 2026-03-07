@@ -20,7 +20,7 @@
             color: #1a1a1a; 
             line-height: 1.5; 
             margin: 0; 
-            padding: 10px; /* Reduced for mobile edges */
+            padding: 10px; 
         }
 
         .container { 
@@ -32,11 +32,34 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.05); 
         }
 
+        /* Language Toggle */
+        .lang-toggle {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .lang-btn {
+            padding: 8px 20px;
+            border: 2px solid var(--primary);
+            background: transparent;
+            color: var(--primary);
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        .lang-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
         h1 { text-align: center; color: var(--primary); font-size: 1.4rem; margin: 10px 0; }
         .subtitle { text-align: center; color: #666; font-size: 0.85rem; margin-bottom: 20px; border-bottom: 1px solid #ddd; padding-bottom: 10px; }
 
         /* Input Section */
-        .info-section { background-color: var(--secondary); padding: 15px; border-radius: 10px; margin-bottom: 20px; }
+        .info-section { background-color: var(--secondary); padding: 15px; border-radius: 10px; margin-bottom: 20px; display: flex; flex-direction: column; gap: 10px;}
         .input-group label { font-weight: bold; color: var(--primary); display: block; margin-bottom: 8px; font-size: 0.9rem; }
         .input-group input { 
             padding: 12px; 
@@ -44,7 +67,7 @@
             border-radius: 8px; 
             width: 100%; 
             box-sizing: border-box; 
-            font-size: 1rem; /* Prevents iOS zoom on focus */
+            font-size: 1rem; 
         }
 
         /* Question Cards */
@@ -75,7 +98,7 @@
 
         .hint-box { display: none; margin: 10px 0; padding: 10px; background-color: #fffbf2; border-left: 4px solid var(--accent); font-size: 0.85rem; font-style: italic; color: #555; }
 
-        /* Options - Large touch targets for Mobile */
+        /* Options */
         .options label { 
             display: flex; 
             align-items: center; 
@@ -88,7 +111,7 @@
             font-size: 0.95rem;
             background: #fafafa;
         }
-        .options input { margin-right: 12px; width: 18px; height: 18px; }
+        .options input { margin-right: 12px; width: 18px; height: 18px; flex-shrink: 0; }
         
         /* Buttons */
         .btn-submit { 
@@ -122,7 +145,6 @@
         .correct-bg { background-color: #d4edda !important; border-color: var(--success) !important; }
         .wrong-bg { background-color: #f8d7da !important; border-color: var(--danger) !important; }
 
-        /* Floating Action Buttons for Mobile Result */
         .action-btns { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 20px; }
         .btn-action { padding: 14px; cursor: pointer; font-weight: bold; border-radius: 8px; border: none; font-size: 1rem; }
         .btn-pdf { background: var(--primary); color: white; }
@@ -130,12 +152,11 @@
         .btn-restart { background: #6c757d; color: white; }
 
         @media print {
-            .btn-submit, .btn-hint, .action-btns, .info-section, .subtitle, .btn-action { display: none !important; }
+            .btn-submit, .btn-hint, .action-btns, .info-section, .subtitle, .lang-toggle, .btn-action { display: none !important; }
             .container { box-shadow: none; border: none; width: 100%; padding: 0; }
             #quiz-form, .feedback { display: block !important; }
         }
 
-        /* Tablet/Desktop tweaks */
         @media (min-width: 600px) {
             body { padding: 20px; }
             h1 { font-size: 1.8rem; }
@@ -146,13 +167,22 @@
 <body>
 
 <div class="container">
-    <h1>✈️ CAFUC GL 02: WRITTEN TEST</h1>
-    <div class="subtitle">HKIAA Assessment | 20 Questions | Pass: 80%</div>
+    <div class="lang-toggle">
+        <button class="lang-btn active" id="btn-en" onclick="setLang('en')">English</button>
+        <button class="lang-btn" id="btn-zh" onclick="setLang('zh')">中文</button>
+    </div>
+
+    <h1 id="main-title">✈️ CAFUC GL 02: WRITTEN TEST</h1>
+    <div class="subtitle" id="sub-title">HKIAA Assessment & Integrated Syllabus | 20 Questions | Pass: 80%</div>
     
     <div class="info-section" id="student-info-input">
         <div class="input-group">
-            <label>Full Name:</label>
+            <label id="lbl-name">Full Name:</label>
             <input type="text" id="studentName" placeholder="Candidate Name">
+        </div>
+        <div class="input-group" id="instructor-group" style="display: none;">
+            <label id="lbl-inst">Instructor Name:</label>
+            <input type="text" id="instructorName" placeholder="Instructor Name">
         </div>
     </div>
 
@@ -161,97 +191,334 @@
     <button type="button" class="btn-submit" id="main-submit-btn" onclick="submitQuiz()">Submit & Generate Report</button>
 
     <div id="result-area">
-        <h2 style="color: var(--primary); margin: 0; font-size: 1.2rem;">CAFUC GL 02: WRITTEN TEST REPORT</h2>
-        <div id="res-student" style="font-size: 1rem; margin: 10px 0;"></div>
+        <h2 style="color: var(--primary); margin: 0; font-size: 1.2rem;" id="rep-title">CAFUC GL 02: WRITTEN TEST REPORT</h2>
+        <div id="res-student" style="font-size: 1rem; margin: 10px 0; font-weight: bold;"></div>
+        <div id="res-instructor" style="font-size: 0.9rem; margin: 5px 0; color: #555; display: none;"></div>
+        
         <div class="score-num" id="score-display">0%</div>
         <div id="res-msg" style="font-weight: bold; margin-bottom: 15px;"></div>
         
         <div class="analysis-box">
-            <h3 style="margin:0 0 10px 0; font-size: 1rem; border-bottom:1px solid #ddd; padding-bottom:5px;">📊 Performance Analysis</h3>
+            <h3 style="margin:0 0 10px 0; font-size: 1rem; border-bottom:1px solid #ddd; padding-bottom:5px;" id="ana-title">📊 Performance Analysis</h3>
             <div id="analysis-content"></div>
         </div>
         
         <div class="action-btns">
-            <button class="btn-action btn-review" onclick="reviewMistakes()">🔍 Review Mistakes</button>
-            <button class="btn-action btn-pdf" onclick="window.print()">📥 Save PDF</button>
-            <button class="btn-action btn-restart" onclick="window.location.reload()">🔄 Restart</button>
+            <button class="btn-action btn-review" id="btn-rev" onclick="reviewMistakes()">🔍 Review Mistakes</button>
+            <button class="btn-action btn-pdf" id="btn-save" onclick="window.print()">📥 Save PDF</button>
+            <button class="btn-action btn-restart" id="btn-res" onclick="window.location.reload()">🔄 Restart</button>
         </div>
     </div>
 </div>
 
 <script>
-    const pool = [
-        // A: Regs & Qualifications (12)
-        { cat: "Regs & Qualifications", q: "Minimum flight hours for HK cadets before solo (inc check)?", opts: ["20.5h", "23.5h", "25h", "29h"], ans: 1, hint: "Review ZUGH Manual Rev2 for specific HK Cadet经历.", r: "ZUGH manual Rev2 requires minimum 23.5 hours for HK students." },
-        { cat: "Regs & Qualifications", q: "Minimum landings required in the aircraft before solo?", opts: ["50", "60", "70", "80"], ans: 2, hint: "A pilot must be consistent. This is 10 more than the '60' mark.", r: "70 landings must be documented in the record." },
-        { cat: "Regs & Qualifications", q: "Where is the pre-solo endorsement signed for HK cadets?", opts: ["Cloud App", "Physical Logbook/Record", "ID Card", "Checklist"], ans: 1, hint: "Digital platforms are for domestic students only.", r: "Physical Logbooks are used for HK cadet endorsements." },
-        { cat: "Regs & Qualifications", q: "Validity of pre-solo education training?", opts: ["7 days", "14 days", "30 days", "60 days"], ans: 2, r: "Valid for 30 calendar days per CCAR-141." },
-        { cat: "Regs & Qualifications", q: "Who confirms the aircraft is safe for flight?", opts: ["ATC", "Mechanic", "PIC", "Instructor"], ans: 2, r: "The PIC is final authority for airworthiness." },
-        { cat: "Regs & Qualifications", q: "Day VFR fuel reserve requirement?", opts: ["15m", "30m", "45m", "60m"], ans: 1, r: "30 minutes at normal cruise speed." },
-        { cat: "Regs & Qualifications", q: "Head-on collision avoidance rule?", opts: ["Left", "Right", "Climb", "ATC call"], ans: 1, r: "Both aircraft must alter course to the right." },
-        { cat: "Regs & Qualifications", q: "Right-of-way when overtaking?", opts: ["Overtaker", "Overtaken", "Faster", "Larger"], ans: 1, r: "The aircraft being overtaken has right-of-way." },
-        { cat: "Regs & Qualifications", q: "Restraints required during takeoff?", opts: ["Seatbelt", "Harness", "Both", "None"], ans: 2, r: "Both seatbelt and shoulder harness are mandatory." },
-        { cat: "Regs & Qualifications", q: "Altitude over congested area?", opts: ["500ft", "1000ft above obstacle", "2000ft", "3000ft"], ans: 1, r: "1000ft above highest obstacle." },
-        { cat: "Regs & Qualifications", q: "Documents required on person for solo?", opts: ["ID", "Medical + Endorsed Logbook", "Manuals", "Log only"], ans: 1, r: "Medical and endorsed Logbook are required." },
-        { cat: "Regs & Qualifications", q: "Can a student pilot carry passengers?", opts: ["Yes", "No", "Family", "Students"], ans: 1, r: "Strictly prohibited." },
+    // --- UI Dictionary for bilingual support ---
+    const ui = {
+        title: { en: "✈️ CAFUC GL 02: WRITTEN TEST", zh: "✈️ 广汉分院单飞笔试考核" },
+        subtitle: { en: "HKIAA Assessment & Integrated Syllabus | 20 Questions | Pass: 80%", zh: "整体大纲学员评估 | 20题 | 及格线: 80%" },
+        nameLabel: { en: "Full Name:", zh: "考生姓名:" },
+        namePlaceholder: { en: "Candidate Name", zh: "请输入考生姓名" },
+        instLabel: { en: "Instructor Name:", zh: "责任教员姓名:" },
+        instPlaceholder: { en: "Instructor Name", zh: "请输入责任教员姓名" },
+        submitBtn: { en: "Submit & Generate Report", zh: "提交并生成报告" },
+        repTitle: { en: "CAFUC GL 02: WRITTEN TEST REPORT", zh: "广汉分院单飞笔试成绩报告" },
+        candRes: { en: "Candidate: ", zh: "考生姓名: " },
+        instRes: { en: "Instructor: ", zh: "责任教员: " },
+        statPass: { en: "STATUS: PASS", zh: "考核状态：合格" },
+        statFail: { en: "STATUS: FAIL", zh: "考核状态：不合格" },
+        anaTitle: { en: "📊 Performance Analysis", zh: "📊 成绩与分类分析" },
+        btnRev: { en: "🔍 Review Mistakes", zh: "🔍 错题回顾" },
+        btnSave: { en: "📥 Save PDF", zh: "📥 保存PDF凭证" },
+        btnRes: { en: "🔄 Restart", zh: "🔄 重新测试" },
+        hintBtn: { en: "💡 Hint", zh: "💡 提示" },
+        hintLabel: { en: "Hint:", zh: "提示:" },
+        noHint: { en: "Think of standard ops.", zh: "回想标准操作程序。" },
+        correct: { en: "✅ Correct.", zh: "✅ 正确。" },
+        incorrect: { en: "❌ Incorrect.", zh: "❌ 错误。" },
+        corrAns: { en: "Correct Answer:", zh: "正确答案:" },
+        alertName: { en: "Please enter Candidate Name!", zh: "请输入考生姓名！" },
+        alertInst: { en: "Please enter Instructor Name!", zh: "请输入责任教员姓名！" },
+        statusLabels: {
+            mastered: { en: '🌟 Mastered', zh: '🌟 已掌握' },
+            solidify: { en: '🔨 Solidify', zh: '🔨 需巩固' },
+            review: { en: '⚠️ Review', zh: '⚠️ 需复习' }
+        }
+    };
 
-        // B: Procedures & Weather (13)
-        { cat: "Procedures & Weather", q: "Max ground wind for first solo at ZUGH?", opts: ["3m/s", "5m/s", "8m/s", "10m/s"], ans: 0, r: "Ground wind limit: 3m/s." },
-        { cat: "Procedures & Weather", q: "Max crosswind for first solo at ZUGH?", opts: ["1m/s", "2m/s", "3m/s", "5m/s"], ans: 1, r: "Crosswind limit: 2m/s." },
-        { cat: "Procedures & Weather", q: "Max tailwind for first solo at ZUGH?", opts: ["0m/s", "1m/s", "2m/s", "3m/s"], ans: 1, r: "Tailwind limit: 1m/s." },
-        { cat: "Procedures & Weather", q: "Min visibility for solo flight?", opts: ["3km", "5km", "8km", "10km"], ans: 1, r: "Visibility minimum: 5km." },
-        { cat: "Procedures & Weather", q: "Min ceiling for solo flight?", opts: ["300m", "450m", "600m", "1000m"], ans: 2, r: "Ceiling minimum: 600m." },
-        { cat: "Procedures & Weather", q: "Why use full runway for takeoff?", opts: ["ATC", "Safety margin for abort", "Habit", "Fuel"], ans: 1, r: "Maximizes stopping distance in emergency." },
-        { cat: "Procedures & Weather", q: "Procedure for first lap of first solo?", opts: ["Full stop", "Touch & Go", "Go-around", "Check"], ans: 2, r: "Mandatory go-around check required." },
-        { cat: "Procedures & Weather", q: "Taxiway centerline color?", opts: ["White", "Yellow", "Blue", "Green"], ans: 1, r: "Yellow centerline." },
-        { cat: "Procedures & Weather", q: "Taxiway edge light color?", opts: ["White", "Yellow", "Blue", "Green"], ans: 2, r: "Edge lights are blue." },
-        { cat: "Procedures & Weather", q: "Line you must not cross without clearance?", opts: ["Edge", "Main Gear", "Hold-short", "Center"], ans: 2, r: "Runway hold-short line." },
-        { cat: "Procedures & Weather", q: "Runway 13 magnetic azimuth approx?", opts: ["013 deg", "130 deg", "310 deg", "113 deg"], ans: 1, r: "Roughly 130 degrees magnetic." },
-        { cat: "Procedures & Weather", q: "Flight bag location to stop seat slip?", opts: ["Trunk", "Right", "Behind Left Seat", "Feet"], ans: 2, hint: "Acts as a physical block for the pilot seat track.", r: "Behind the left seat." },
-        { cat: "Procedures & Weather", q: "Wind cone shows tailwind on final?", opts: ["Ignore", "Confirm with ATC", "Land", "Panic"], ans: 1, r: "Always confirm wind with ATC." },
+    const catMap = {
+        "Regs": { en: "Regs & Qualifications", zh: "规章与资质" },
+        "Procs": { en: "Procedures & Weather", zh: "程序与气象" },
+        "Perf": { en: "Performance & Systems", zh: "性能与系统" },
+        "Emerg": { en: "Emergency & Human Factors", zh: "应急与人为因素" }
+    };
 
-        // C: Performance & Systems (13)
-        { cat: "Performance & Systems", q: "SR20 approach speed 0% Flaps?", opts: ["80 KIAS", "84 KIAS", "89 KIAS", "95 KIAS"], ans: 2, r: "Manual: 89 KIAS for 0% flaps." },
-        { cat: "Performance & Systems", q: "SR20 approach speed 50% Flaps?", opts: ["78 KIAS", "80 KIAS", "84 KIAS", "89 KIAS"], ans: 2, r: "Manual: 84 KIAS for 50% flaps." },
-        { cat: "Performance & Systems", q: "Bottom of white arc speed?", opts: ["Vs1", "Vso", "Vfe", "Vne"], ans: 1, r: "Vso landing stall speed." },
-        { cat: "Performance & Systems", q: "Vy best rate of climb purpose?", opts: ["Distance", "Altitude in Time", "Safety", "Fuel"], ans: 1, r: "Greatest altitude gain over time." },
-        { cat: "Performance & Systems", q: "Top of green arc speed?", opts: ["Vfe", "Vno", "Vne", "Va"], ans: 1, r: "Vno max structural cruise." },
-        { cat: "Performance & Systems", q: "Winter air effect on takeoff?", opts: ["Longer", "Shorter roll", "None", "Bumpy"], ans: 1, hint: "Dense air provides more lift and engine power.", r: "Denser air shortens the ground roll." },
-        { cat: "Performance & Systems", q: "Screens too dark in day, check?", opts: ["Batt", "Panel Dimmer", "Alt", "Breaker"], ans: 1, r: "Check panel dimmer settings." },
-        { cat: "Performance & Systems", q: "Aft CG effect on stability?", opts: ["Stable", "Less Stable", "None", "Better"], ans: 1, r: "Decreased longitudinal stability." },
-        { cat: "Performance & Systems", q: "Load factor in 60-degree bank?", opts: ["1.4G", "1.5G", "2G", "3G"], ans: 2, r: "60 deg = 2.0 Gs." },
-        { cat: "Performance & Systems", q: "Blocked Pitot (open drain) effect?", opts: ["Constant", "Zero", "Max", "OK"], ans: 1, r: "Indicated airspeed drops to zero." },
-        { cat: "Performance & Systems", q: "Ground Effect result?", opts: ["Drag", "Less Induced Drag", "Stall", "Speed"], ans: 1, r: "Reduction in induced drag." },
-        { cat: "Performance & Systems", q: "Flap range arc color?", opts: ["White", "Green", "Yellow", "Red"], ans: 0, r: "White arc." },
-        { cat: "Performance & Systems", q: "Primary cause of stall?", opts: ["Speed", "Weight", "Critical AoA", "Temp"], ans: 2, r: "Exceeding critical angle of attack." },
-
-        // D: Emergency & Human Factors (12)
-        { cat: "Emergency & Human Factors", q: "Engine fail low altitude after takeoff?", opts: ["Turn back", "Land ahead (30 deg sector)", "Deploy CAPS", "Call"], ans: 1, r: "Land within 30-deg sector ahead." },
-        { cat: "Emergency & Human Factors", q: "How to handle a bounced landing?", opts: ["Push", "Pull", "Hold attitude + Power + Go-around", "Brake"], ans: 2, hint: "Recover energy, stabilize, or try again from air.", r: "Go-around is safest." },
-        { cat: "Emergency & Human Factors", q: "Door opens during takeoff?", opts: ["Close", "Fly Airplane", "Report", "Stop"], ans: 1, r: "Aviate first: Maintain control." },
-        { cat: "Emergency & Human Factors", q: "Requirement for a spin?", opts: ["Speed", "Stall + Yaw", "Bank", "Low Fuel"], ans: 1, r: "Aggravated stall in uncoordinated flight." },
-        { cat: "Emergency & Human Factors", q: "Rotation behind large aircraft?", opts: ["After", "Before its point", "End", "Same"], ans: 1, r: "Rotate before preceding plane's point." },
-        { cat: "Emergency & Human Factors", q: "Wake turbulence interval behind A320?", opts: ["1m", "2m", "5m", "10m"], ans: 1, r: "Standard 2 minutes." },
-        { cat: "Emergency & Human Factors", q: "FTD emergency eval for HK cadets?", opts: ["Gear", "CAPS Deployment", "Icing", "Fuel"], ans: 1, r: "FTD03 CAPS assessment." },
-        { cat: "Emergency & Human Factors", q: "External unfavorable conditions in TEM?", opts: ["Errors", "Threats", "UAS", "Hazards"], ans: 1, r: "External factors = Threats." },
-        { cat: "Emergency & Human Factors", q: "Mandatory action for unstable approach?", opts: ["Fix", "Continue", "Go-around", "Slower"], ans: 2, r: "Mandatory go-around." },
-        { cat: "Emergency & Human Factors", q: "Final fitness authority for student solo?", opts: ["Student", "Instructor", "ATC", "Mechanic"], ans: 1, r: "Authorized flight instructor." },
-        { cat: "Emergency & Human Factors", q: "Dizzy/tingling in flight symptoms?", opts: ["Hunger", "Hyperventilation", "Cold", "Sleep"], ans: 1, r: "Hyperventilation symptoms." },
-        { cat: "Emergency & Human Factors", q: "Feeling faster near ground illusion?", opts: ["Slow", "Faster", "Stationary", "Blurry"], ans: 1, r: "Ground rushing illusion." }
-    ];
-
+    let lang = 'en'; // default language
     let currentTest = [];
 
+    // --- Pool Data (Separated EN/ZH) ---
+    const pool = [
+        // A: Regs & Qualifications
+        { catId: "Regs", 
+          q_en: "Minimum flight hours for HK cadets/integrated syllabus before solo (inc check)?", q_zh: "整体大纲/香港学员单飞前最低飞行小时数（含检查）？", 
+          opts_en: ["20.5h", "23.5h", "25h", "29h"], opts_zh: ["20.5小时", "23.5小时", "25小时", "29小时"], 
+          ans: 1, 
+          hint_en: "Review Training Management Procedure for specific hours.", hint_zh: "查阅《广汉分院单飞训练管理程序》要求。", 
+          r_en: "The syllabus requires 23.5-29.5 hours including the pre-solo check.", r_zh: "整体大纲要求飞机飞行训练时间(含首次单飞前技术检查)23.5-29.5小时。" },
+        { catId: "Regs", 
+          q_en: "Minimum landings required in the aircraft before solo?", q_zh: "单飞前要求在飞机上完成的最少着陆次数？", 
+          opts_en: ["50", "60", "70", "80"], opts_zh: ["50次", "60次", "70次", "80次"], 
+          ans: 2, 
+          hint_en: "A pilot must be consistent. This is 10 more than the '60' mark.", hint_zh: "飞行员必须保持稳定性，比60次多10次。", 
+          r_en: "70 landings must be documented in the record.", r_zh: "着陆训练次数必须不少于70次。" },
+        { catId: "Regs", 
+          q_en: "Where is the pre-solo endorsement signed for HK cadets (vs domestic)?", q_zh: "香港学员的单飞前签注在哪里完成（对比国内学员）？", 
+          opts_en: ["Cloud App", "Physical Logbook", "ID Card", "Checklist"], opts_zh: ["云执照", "纸质经历记录本", "身份证", "检查单"], 
+          ans: 1, 
+          hint_en: "Digital platforms are for domestic students only.", hint_zh: "国内大纲学生使用数字平台。", 
+          r_en: "Physical Logbooks are used for HK cadet endorsements, while domestic integrated students use the Cloud App.", r_zh: "香港学员使用纸质记录本，国内整体大纲学员在云执照上完成签注。" },
+        { catId: "Regs", 
+          q_en: "Validity of pre-solo education training?", q_zh: "首次单飞前教育的有效期是多久？", 
+          opts_en: ["7 days", "14 days", "30 days", "60 days"], opts_zh: ["7天", "14天", "30个日历日", "60天"], 
+          ans: 2, r_en: "Valid for 30 calendar days.", r_zh: "首次单飞前30个日历日内需进行针对单飞的专项培训教育。" },
+        { catId: "Regs", 
+          q_en: "Who confirms the aircraft is safe for flight?", q_zh: "谁负责最终确认航空器处于安全可飞状态？", 
+          opts_en: ["ATC", "Mechanic", "PIC", "Instructor"], opts_zh: ["塔台管制", "机务维修人员", "机长 (PIC)", "责任教师"], 
+          ans: 2, r_en: "The PIC is final authority for airworthiness.", r_zh: "机长是对航空器适航性负责的最终权威。" },
+        { catId: "Regs", 
+          q_en: "Day VFR fuel reserve requirement?", q_zh: "白昼VFR飞行的燃油储备要求？", 
+          opts_en: ["15m", "30m", "45m", "60m"], opts_zh: ["15分钟", "30分钟", "45分钟", "60分钟"], 
+          ans: 1, r_en: "30 minutes at normal cruise speed.", r_zh: "正常巡航速度下至少30分钟的燃油储备。" },
+        { catId: "Regs", 
+          q_en: "Head-on collision avoidance rule?", q_zh: "对头相遇的避让规则？", 
+          opts_en: ["Left", "Right", "Climb", "ATC call"], opts_zh: ["向左转", "向右转", "爬升", "呼叫塔台"], 
+          ans: 1, r_en: "Both aircraft must alter course to the right.", r_zh: "两架航空器都必须向右改变航向。" },
+        { catId: "Regs", 
+          q_en: "Right-of-way when overtaking?", q_zh: "超越其他航空器时的超越权规则？", 
+          opts_en: ["Overtaker", "Overtaken", "Faster", "Larger"], opts_zh: ["超越者", "被超越者", "速度快者", "体积大者"], 
+          ans: 1, r_en: "The aircraft being overtaken has right-of-way.", r_zh: "被超越的航空器拥有优先权。" },
+        { catId: "Regs", 
+          q_en: "Restraints required during takeoff?", q_zh: "起飞时要求的约束装置？", 
+          opts_en: ["Seatbelt", "Harness", "Both", "None"], opts_zh: ["安全带", "肩带", "安全带和肩带", "均不需要"], 
+          ans: 2, r_en: "Both seatbelt and shoulder harness are mandatory.", r_zh: "必须同时系好安全带和肩带。" },
+        { catId: "Regs", 
+          q_en: "Altitude over congested area?", q_zh: "飞越人口稠密区的最低高度要求？", 
+          opts_en: ["500ft", "1000ft above obstacle", "2000ft", "3000ft"], opts_zh: ["500英尺", "高于障碍物1000英尺", "2000英尺", "3000英尺"], 
+          ans: 1, r_en: "1000ft above highest obstacle.", r_zh: "高于最高障碍物1000英尺。" },
+        { catId: "Regs", 
+          q_en: "Documents required on person for solo?", q_zh: "单飞时必须随身携带的文件？", 
+          opts_en: ["ID", "Medical + Endorsed Logbook", "Manuals", "Log only"], opts_zh: ["身份证件", "体检合格证+有效签注的记录本", "飞行手册", "仅记录本"], 
+          ans: 1, r_en: "Medical and endorsed Logbook are required.", r_zh: "必须携带有效体检合格证及带有有效签注的飞行记录本/云执照。" },
+        { catId: "Regs", 
+          q_en: "Can a student pilot carry passengers?", q_zh: "学生驾驶员单飞可以搭载乘客吗？", 
+          opts_en: ["Yes", "No", "Family only", "Other students"], opts_zh: ["可以", "不可以", "仅限家属", "仅限其他学员"], 
+          ans: 1, r_en: "Strictly prohibited.", r_zh: "严禁搭载机上人员。" },
+
+        // B: Procedures & Weather
+        { catId: "Procs", 
+          q_en: "Max ground wind for first solo at ZUGH?", q_zh: "广汉本场首次单飞最大地面风速限制？", 
+          opts_en: ["3m/s", "5m/s", "8m/s", "10m/s"], opts_zh: ["3米/秒", "5米/秒", "8米/秒", "10米/秒"], 
+          ans: 0, r_en: "Ground wind limit is 3m/s.", r_zh: "地面风不超过3m/s。" },
+        { catId: "Procs", 
+          q_en: "Max crosswind for first solo at ZUGH?", q_zh: "广汉本场首次单飞最大侧风分量限制？", 
+          opts_en: ["1m/s", "2m/s", "3m/s", "5m/s"], opts_zh: ["1米/秒", "2米/秒", "3米/秒", "5米/秒"], 
+          ans: 1, r_en: "Crosswind limit is 2m/s.", r_zh: "侧风分量不超过2m/s。" },
+        { catId: "Procs", 
+          q_en: "Max tailwind for first solo at ZUGH?", q_zh: "广汉本场首次单飞最大顺风分量限制？", 
+          opts_en: ["0m/s", "1m/s", "2m/s", "3m/s"], opts_zh: ["0米/秒", "1米/秒", "2米/秒", "3米/秒"], 
+          ans: 1, r_en: "Tailwind limit is 1m/s.", r_zh: "顺风分量不超过1m/s。" },
+        { catId: "Procs", 
+          q_en: "Min visibility for solo flight?", q_zh: "单飞最低能见度要求？", 
+          opts_en: ["3km", "5km", "8km", "10km"], opts_zh: ["3公里", "5公里", "8公里", "10公里"], 
+          ans: 1, r_en: "Visibility minimum is 5km.", r_zh: "能见度要求不低于5km。" },
+        { catId: "Procs", 
+          q_en: "Min ceiling for solo flight?", q_zh: "本场单飞最低云高要求？", 
+          opts_en: ["300m", "450m", "600m", "1000m"], opts_zh: ["300米", "450米", "600米", "1000米"], 
+          ans: 2, r_en: "Ceiling minimum is 600m.", r_zh: "本场单飞云高不低于600m。" },
+        { catId: "Procs", 
+          q_en: "Why use full runway for takeoff?", q_zh: "单飞为什么必须使用全跑道起飞？", 
+          opts_en: ["ATC rule", "Safety margin for abort", "Habit", "Fuel saving"], opts_zh: ["塔台规定", "为中断起飞提供安全余度", "个人习惯", "节省燃油"], 
+          ans: 1, r_en: "Maximizes stopping distance in emergency. Solo requires full runway takeoff.", r_zh: "最大限度增加紧急停止距离。程序规定单飞必须使用全跑道起飞。" },
+        { catId: "Procs", 
+          q_en: "Procedure for first lap of first solo?", q_zh: "首次单飞第一圈起落航线的强制程序是什么？", 
+          opts_en: ["Full stop", "Touch & Go", "Go-around", "Check"], opts_zh: ["全停", "连续起飞", "复飞", "检查清单"], 
+          ans: 2, r_en: "Mandatory go-around is required on the first lap.", r_zh: "第一圈起落航线必须执行复飞训练。" },
+        { catId: "Procs", 
+          q_en: "Taxiway centerline color?", q_zh: "滑行道中线的颜色？", 
+          opts_en: ["White", "Yellow", "Blue", "Green"], opts_zh: ["白色", "黄色", "蓝色", "绿色"], 
+          ans: 1, r_en: "Yellow centerline.", r_zh: "滑行道中线为黄色。" },
+        { catId: "Procs", 
+          q_en: "Taxiway edge light color?", q_zh: "滑行道边灯的颜色？", 
+          opts_en: ["White", "Yellow", "Blue", "Green"], opts_zh: ["白色", "黄色", "蓝色", "绿色"], 
+          ans: 2, r_en: "Edge lights are blue.", r_zh: "滑行道边灯为蓝色。" },
+        { catId: "Procs", 
+          q_en: "Line you must not cross without clearance?", q_zh: "未经许可绝对不能越过的线？", 
+          opts_en: ["Edge", "Main Gear", "Hold-short", "Center"], opts_zh: ["边缘线", "主起落架线", "跑道等待标志线", "中线"], 
+          ans: 2, r_en: "Runway hold-short line.", r_zh: "跑道等待标志线（停止线）。" },
+        { catId: "Procs", 
+          q_en: "Runway 13 magnetic azimuth approx?", q_zh: "13号跑道大概的磁方位角？", 
+          opts_en: ["013 deg", "130 deg", "310 deg", "113 deg"], opts_zh: ["013度", "130度", "310度", "113度"], 
+          ans: 1, r_en: "Roughly 130 degrees magnetic.", r_zh: "磁方位角大约为130度。" },
+        { catId: "Procs", 
+          q_en: "Flight bag location to stop seat slip?", q_zh: "为防止单飞时座椅向后滑动，飞行箱应放置在哪里？", 
+          opts_en: ["Trunk", "Right seat", "Behind Left Seat", "Feet"], opts_zh: ["行李舱", "右座", "左座后方", "脚下"], 
+          ans: 2, hint_en: "Acts as a physical block for the pilot seat track.", hint_zh: "作为左座驾驶员座椅滑轨的物理阻挡物。", 
+          r_en: "Instructor should ensure the bag is behind the left seat.", r_zh: "责任教师应建议将飞行箱放置左座后方以防止座椅向后滑动。" },
+        { catId: "Procs", 
+          q_en: "Wind cone shows tailwind on final?", q_zh: "五边进近时发现风向袋显示为顺风怎么办？", 
+          opts_en: ["Ignore", "Confirm with ATC", "Land", "Panic"], opts_zh: ["忽略", "立即与塔台确认", "继续着陆", "恐慌"], 
+          ans: 1, r_en: "Always confirm wind with ATC.", r_zh: "应当立即与塔台核实风向风速。" },
+
+        // C: Performance & Systems
+        { catId: "Perf", 
+          q_en: "SR20 approach speed 0% Flaps?", q_zh: "SR20 0%襟翼的进近速度？", 
+          opts_en: ["80 KIAS", "84 KIAS", "89 KIAS", "95 KIAS"], opts_zh: ["80 KIAS", "84 KIAS", "89 KIAS", "95 KIAS"], 
+          ans: 2, r_en: "Manual: 89 KIAS for 0% flaps.", r_zh: "手册规定0%襟翼为89 KIAS。" },
+        { catId: "Perf", 
+          q_en: "SR20 approach speed 50% Flaps?", q_zh: "SR20 50%襟翼的进近速度？", 
+          opts_en: ["78 KIAS", "80 KIAS", "84 KIAS", "89 KIAS"], opts_zh: ["78 KIAS", "80 KIAS", "84 KIAS", "89 KIAS"], 
+          ans: 2, r_en: "Manual: 84 KIAS for 50% flaps.", r_zh: "手册规定50%襟翼为84 KIAS。" },
+        { catId: "Perf", 
+          q_en: "Bottom of white arc speed?", q_zh: "空速表白弧底端代表什么速度？", 
+          opts_en: ["Vs1", "Vso", "Vfe", "Vne"], opts_zh: ["Vs1", "Vso", "Vfe", "Vne"], 
+          ans: 1, r_en: "Vso landing stall speed.", r_zh: "Vso 着陆构型失速速度。" },
+        { catId: "Perf", 
+          q_en: "Vy best rate of climb purpose?", q_zh: "Vy最佳爬升率速度的目的是什么？", 
+          opts_en: ["Distance", "Altitude in Time", "Safety", "Fuel"], opts_zh: ["最短距离爬升", "单位时间内获得最大高度", "安全余度", "省油"], 
+          ans: 1, r_en: "Greatest altitude gain over time.", r_zh: "在最短时间内获得最大的高度。" },
+        { catId: "Perf", 
+          q_en: "Top of green arc speed?", q_zh: "空速表绿弧顶端代表什么速度？", 
+          opts_en: ["Vfe", "Vno", "Vne", "Va"], opts_zh: ["Vfe", "Vno", "Vne", "Va"], 
+          ans: 1, r_en: "Vno max structural cruise.", r_zh: "Vno 最大结构巡航速度。" },
+        { catId: "Perf", 
+          q_en: "Winter air effect on takeoff?", q_zh: "冬季冷空气对起飞滑跑距离有什么影响？", 
+          opts_en: ["Longer", "Shorter roll", "None", "Bumpy"], opts_zh: ["滑跑变长", "滑跑变短", "无影响", "颠簸"], 
+          ans: 1, hint_en: "Dense air provides more lift and engine power.", hint_zh: "密度大的空气提供更多的升力和发动机功率。", 
+          r_en: "Denser air shortens the ground roll.", r_zh: "冷空气密度大，缩短起飞滑跑距离。" },
+        { catId: "Perf", 
+          q_en: "Screens too dark in day, check?", q_zh: "白天飞行如果显示屏太暗，优先检查什么？", 
+          opts_en: ["Batt", "Panel Dimmer", "Alt", "Breaker"], opts_zh: ["电瓶", "面板调光器", "发电机", "跳火开关"], 
+          ans: 1, r_en: "Check panel dimmer settings.", r_zh: "检查仪表板调光器设置。" },
+        { catId: "Perf", 
+          q_en: "Aft CG effect on stability?", q_zh: "重心靠后对飞机纵向稳定性的影响？", 
+          opts_en: ["Stable", "Less Stable", "None", "Better"], opts_zh: ["变稳定", "稳定性变差", "无影响", "操控变好"], 
+          ans: 1, r_en: "Decreased longitudinal stability.", r_zh: "导致飞机纵向稳定性下降。" },
+        { catId: "Perf", 
+          q_en: "Load factor in 60-degree bank?", q_zh: "60度坡度平飞时的载荷因数是多少？", 
+          opts_en: ["1.4G", "1.5G", "2G", "3G"], opts_zh: ["1.4G", "1.5G", "2G", "3G"], 
+          ans: 2, r_en: "60 deg = 2.0 Gs.", r_zh: "60度坡度产生2G的载荷。" },
+        { catId: "Perf", 
+          q_en: "Blocked Pitot (open drain) effect?", q_zh: "皮托管堵塞但排水孔通畅时，空速表有何反应？", 
+          opts_en: ["Constant", "Zero", "Max", "OK"], opts_zh: ["保持不变", "降至零", "指示最大值", "显示正常"], 
+          ans: 1, r_en: "Indicated airspeed drops to zero.", r_zh: "指示空速将降至零。" },
+        { catId: "Perf", 
+          q_en: "Ground Effect result?", q_zh: "地面效应带来的直接结果是什么？", 
+          opts_en: ["Drag", "Less Induced Drag", "Stall", "Speed"], opts_zh: ["阻力增加", "诱导阻力减小", "容易失速", "速度减小"], 
+          ans: 1, r_en: "Reduction in induced drag.", r_zh: "诱导阻力显著减小。" },
+        { catId: "Perf", 
+          q_en: "Flap range arc color?", q_zh: "襟翼正常操作范围的指示弧颜色？", 
+          opts_en: ["White", "Green", "Yellow", "Red"], opts_zh: ["白色", "绿色", "黄色", "红色"], 
+          ans: 0, r_en: "White arc.", r_zh: "白弧指示襟翼操作速度范围。" },
+        { catId: "Perf", 
+          q_en: "Primary cause of stall?", q_zh: "导致飞机失速的最根本原因是什么？", 
+          opts_en: ["Speed", "Weight", "Critical AoA", "Temp"], opts_zh: ["速度过低", "重量过大", "超过临界迎角", "温度过高"], 
+          ans: 2, r_en: "Exceeding critical angle of attack.", r_zh: "迎角超过了临界迎角。" },
+
+        // D: Emergency & Human Factors
+        { catId: "Emerg", 
+          q_en: "Engine fail low altitude after takeoff?", q_zh: "起飞后低空发动机失效的最安全做法？", 
+          opts_en: ["Turn back", "Land ahead (30 deg sector)", "Deploy CAPS", "Call"], opts_zh: ["立即转弯返场", "在机头前方30度扇区内着陆", "立即释放降落伞", "呼叫救援"], 
+          ans: 1, r_en: "Land within 30-deg sector ahead.", r_zh: "应当在正前方30度扇区内选择合适场地着陆。" },
+        { catId: "Emerg", 
+          q_en: "How to handle a bounced landing?", q_zh: "遇到弹跳着陆（平飘过高）应如何处置？", 
+          opts_en: ["Push", "Pull", "Hold attitude + Power + Go-around", "Brake"], opts_zh: ["推杆压机头", "拉杆增加迎角", "保持姿态+加马力+复飞", "踩刹车"], 
+          ans: 2, hint_en: "Recover energy, stabilize, or try again from air.", hint_zh: "恢复能量并稳定，最安全的是重新建立航线。", 
+          r_en: "Go-around is safest.", r_zh: "保持姿态，增加马力并执行复飞是最安全的选择。" },
+        { catId: "Emerg", 
+          q_en: "Door opens during takeoff?", q_zh: "起飞滑跑或爬升时舱门意外弹开，首要动作是？", 
+          opts_en: ["Close", "Fly Airplane", "Report", "Stop"], opts_zh: ["尝试拉上舱门", "以操纵飞机为先", "报告塔台", "中断一切动作"], 
+          ans: 1, r_en: "Aviate first: Maintain control.", r_zh: "首要任务是保持飞机的操纵和安全飞行状态。" },
+        { catId: "Emerg", 
+          q_en: "Requirement for a spin?", q_zh: "飞机进入螺旋的必要条件是什么？", 
+          opts_en: ["Speed", "Stall + Yaw", "Bank", "Low Fuel"], opts_zh: ["速度极低", "失速加上偏航", "大坡度", "燃油不平衡"], 
+          ans: 1, r_en: "Aggravated stall in uncoordinated flight.", r_zh: "飞机在不协调飞行状态下发生失速（失速+偏航）。" },
+        { catId: "Emerg", 
+          q_en: "Rotation behind large aircraft?", q_zh: "在大型客机之后起飞，抬轮时机应如何选择？", 
+          opts_en: ["After", "Before its point", "End", "Same"], opts_zh: ["在其抬轮点之后", "在其抬轮点之前", "跑道尽头", "相同位置"], 
+          ans: 1, r_en: "Rotate before preceding plane's point to avoid wake turbulence.", r_zh: "在前机抬轮点之前抬轮以避开下沉气流。" },
+        { catId: "Emerg", 
+          q_en: "Wake turbulence interval behind A320?", q_zh: "在A320等中型机后起飞的尾流间隔时间？", 
+          opts_en: ["1m", "2m", "5m", "10m"], opts_zh: ["1分钟", "2分钟", "5分钟", "10分钟"], 
+          ans: 1, r_en: "Standard 2 minutes.", r_zh: "标准尾流间隔为2分钟。" },
+        { catId: "Emerg", 
+          q_en: "FTD emergency eval for solo training?", q_zh: "首次单飞前FTD训练必须完成的应急项目评估包括？", 
+          opts_en: ["Gear", "CAPS Deployment", "Icing", "Fuel"], opts_zh: ["起落架故障", "CAPS使用及中断起飞", "结冰", "燃油泄漏"], 
+          ans: 1, r_en: "FTD03 requires CAPS, rejected takeoff, and unexpected door opening training.", r_zh: "至少在FTD03课程完成一次CAPS使用、中断起飞训练、驾驶舱舱门意外弹开处置。" },
+        { catId: "Emerg", 
+          q_en: "External unfavorable conditions in TEM?", q_zh: "在TEM（威胁与差错管理）模型中，外部的不利条件被称为什么？", 
+          opts_en: ["Errors", "Threats", "UAS", "Hazards"], opts_zh: ["差错", "威胁", "非预期的航空器状态", "危险源"], 
+          ans: 1, r_en: "External factors = Threats.", r_zh: "外部不利因素被定义为威胁（Threats）。" },
+        { catId: "Emerg", 
+          q_en: "Mandatory action for unstable approach?", q_zh: "遇到不稳定进近时的强制动作是？", 
+          opts_en: ["Fix", "Continue", "Go-around", "Slower"], opts_zh: ["强行修正", "继续进近", "复飞", "减速"], 
+          ans: 2, r_en: "Mandatory go-around.", r_zh: "必须执行复飞程序。" },
+        { catId: "Emerg", 
+          q_en: "Final fitness authority for student solo?", q_zh: "实施单飞前，谁负责确认学生身体和心理状况良好？", 
+          opts_en: ["Student", "Instructor", "ATC", "Mechanic"], opts_zh: ["学生本人", "责任教师", "塔台", "机务"], 
+          ans: 1, r_en: "Authorized flight instructor must confirm fitness.", r_zh: "责任教师应确认学生身体和心理良好。" },
+        { catId: "Emerg", 
+          q_en: "Dizzy/tingling in flight symptoms?", q_zh: "飞行中感到头晕、手指刺痛发麻，这是什么症状？", 
+          opts_en: ["Hunger", "Hyperventilation", "Cold", "Sleep"], opts_zh: ["饥饿低血糖", "换气过度", "寒冷冻伤", "疲劳发作"], 
+          ans: 1, r_en: "Hyperventilation symptoms.", r_zh: "这是由于紧张导致的换气过度症状。" },
+        { catId: "Emerg", 
+          q_en: "Feeling faster near ground illusion?", q_zh: "靠近地面飞行时感觉速度变快的错觉属于？", 
+          opts_en: ["Slow", "Faster", "Stationary", "Blurry"], opts_zh: ["变慢", "靠近地面显快", "静止不动", "视觉模糊"], 
+          ans: 1, r_en: "Ground rushing illusion.", r_zh: "靠近地面显快错觉。" }
+    ];
+
+    // Initialize test sequence
     function initTest() {
-        const cats = ["Regs & Qualifications", "Procedures & Weather", "Performance & Systems", "Emergency & Human Factors"];
+        const catIds = ["Regs", "Procs", "Perf", "Emerg"];
         currentTest = [];
-        cats.forEach(c => {
-            const filtered = pool.filter(q => q.cat === c);
+        catIds.forEach(c => {
+            const filtered = pool.filter(q => q.catId === c);
             const shuffled = filtered.sort(() => 0.5 - Math.random());
             currentTest.push(...shuffled.slice(0, 5));
         });
         currentTest.sort(() => 0.5 - Math.random());
         render();
+    }
+
+    // Toggle language logic
+    function setLang(newLang) {
+        lang = newLang;
+        
+        // Update Buttons UI
+        document.getElementById('btn-en').className = lang === 'en' ? 'lang-btn active' : 'lang-btn';
+        document.getElementById('btn-zh').className = lang === 'zh' ? 'lang-btn active' : 'lang-btn';
+        
+        // Update Static Text
+        document.getElementById('main-title').innerHTML = ui.title[lang];
+        document.getElementById('sub-title').innerHTML = ui.subtitle[lang];
+        document.getElementById('lbl-name').innerHTML = ui.nameLabel[lang];
+        document.getElementById('studentName').placeholder = ui.namePlaceholder[lang];
+        document.getElementById('main-submit-btn').innerHTML = ui.submitBtn[lang];
+        
+        // Handle Instructor Field
+        document.getElementById('instructor-group').style.display = lang === 'zh' ? 'block' : 'none';
+        document.getElementById('lbl-inst').innerHTML = ui.instLabel[lang];
+        document.getElementById('instructorName').placeholder = ui.instPlaceholder[lang];
+        
+        // Result page static texts
+        document.getElementById('rep-title').innerHTML = ui.repTitle[lang];
+        document.getElementById('ana-title').innerHTML = ui.anaTitle[lang];
+        document.getElementById('btn-rev').innerHTML = ui.btnRev[lang];
+        document.getElementById('btn-save').innerHTML = ui.btnSave[lang];
+        document.getElementById('btn-res').innerHTML = ui.btnRes[lang];
+
+        // Re-render questions if array exists
+        if(currentTest.length > 0) {
+            render();
+        }
     }
 
     function toggleHint(i) {
@@ -265,16 +532,28 @@
         currentTest.forEach((item, i) => {
             const card = document.createElement('div');
             card.className = 'question-card';
+            
+            // Get localized strings
+            const catStr = catMap[item.catId][lang];
+            const qStr = item['q_' + lang];
+            const optsArr = item['opts_' + lang];
+            const hintStr = item['hint_' + lang] || ui.noHint[lang];
+            
+            // Reattach previous selection if switching language mid-quiz
+            const prevSel = form.getAttribute(`data-sel-${i}`);
+
             card.innerHTML = `
-                <div class="tag">${item.cat}</div>
+                <div class="tag">${catStr}</div>
                 <div class="question-header">
-                    <div class="question-text">${i + 1}. ${item.q}</div>
-                    <button type="button" class="btn-hint" onclick="toggleHint(${i})">💡 Hint</button>
+                    <div class="question-text">${i + 1}. ${qStr}</div>
+                    <button type="button" class="btn-hint" onclick="toggleHint(${i})">${ui.hintBtn[lang]}</button>
                 </div>
-                <div class="hint-box" id="hint${i}"><b>Hint:</b> ${item.hint || "Think of standard ops."}</div>
+                <div class="hint-box" id="hint${i}"><b>${ui.hintLabel[lang]}</b> ${hintStr}</div>
                 <div class="options">
-                    ${item.opts.map((o, oi) => `
-                        <label id="q${i}_o${oi}"><input type="radio" name="q${i}" value="${oi}"> ${o}</label>
+                    ${optsArr.map((o, oi) => `
+                        <label id="q${i}_o${oi}">
+                            <input type="radio" name="q${i}" value="${oi}" onchange="document.getElementById('quiz-form').setAttribute('data-sel-${i}', '${oi}')" ${prevSel == oi ? 'checked' : ''}> ${o}
+                        </label>
                     `).join('')}
                 </div>
                 <div class="feedback" id="fb${i}"></div>
@@ -285,65 +564,87 @@
 
     function submitQuiz() {
         const name = document.getElementById('studentName').value.trim();
-        if(!name) { alert("Please enter Candidate Name!"); return; }
+        if(!name) { alert(ui.alertName[lang]); return; }
+
+        let instName = "";
+        if(lang === 'zh') {
+            instName = document.getElementById('instructorName').value.trim();
+            if(!instName) { alert(ui.alertInst[lang]); return; }
+        }
 
         let score = 0;
         const categoryStats = {};
 
         currentTest.forEach((item, i) => {
-            if(!categoryStats[item.cat]) categoryStats[item.cat] = { total: 0, correct: 0 };
-            categoryStats[item.cat].total++;
+            if(!categoryStats[item.catId]) categoryStats[item.catId] = { total: 0, correct: 0 };
+            categoryStats[item.catId].total++;
 
             const selected = document.querySelector(`input[name="q${i}"]:checked`);
             const fb = document.getElementById(`fb${i}`);
             fb.style.display = 'block';
+            
+            const rStr = item['r_' + lang];
+            const optsArr = item['opts_' + lang];
 
             if(selected && parseInt(selected.value) === item.ans) {
                 score++;
-                categoryStats[item.cat].correct++;
-                fb.innerHTML = `<span style="color:var(--success); font-weight:bold;">✅ Correct.</span> ${item.r}`;
+                categoryStats[item.catId].correct++;
+                fb.innerHTML = `<span style="color:var(--success); font-weight:bold;">${ui.correct[lang]}</span> <br> ${rStr}`;
                 document.getElementById(`q${i}_o${item.ans}`).classList.add('correct-bg');
             } else {
-                fb.innerHTML = `<span style="color:var(--danger); font-weight:bold;">❌ Incorrect.</span> Correct: ${item.opts[item.ans]}. ${item.r}`;
+                fb.innerHTML = `<span style="color:var(--danger); font-weight:bold;">${ui.incorrect[lang]}</span> ${ui.corrAns[lang]} ${optsArr[item.ans]}. <br> ${rStr}`;
                 if(selected) document.getElementById(`q${i}_o${selected.value}`).classList.add('wrong-bg');
                 document.getElementById(`q${i}_o${item.ans}`).classList.add('correct-bg');
             }
         });
 
-        displayResults(name, score, categoryStats);
+        displayResults(name, instName, score, categoryStats);
     }
 
-    function displayResults(name, score, stats) {
+    function displayResults(name, instName, score, stats) {
         document.getElementById('quiz-form').style.display = 'none';
         document.getElementById('main-submit-btn').style.display = 'none';
         document.getElementById('student-info-input').style.display = 'none';
+        document.querySelector('.lang-toggle').style.display = 'none'; // Hide language toggle on result
         
         const resArea = document.getElementById('result-area');
         resArea.style.display = 'block';
         
         const finalPercent = Math.round((score / 20) * 100);
-        document.getElementById('res-student').innerText = "Candidate: " + name;
+        document.getElementById('res-student').innerText = ui.candRes[lang] + name;
+        
+        const instDiv = document.getElementById('res-instructor');
+        if(lang === 'zh' && instName) {
+            instDiv.innerText = ui.instRes[lang] + instName;
+            instDiv.style.display = 'block';
+        } else {
+            instDiv.style.display = 'none';
+        }
+
         document.getElementById('score-display').innerText = finalPercent + "%";
         
         const msg = document.getElementById('res-msg');
         if(finalPercent >= 80) {
-            msg.innerText = "STATUS: PASS";
+            msg.innerText = ui.statPass[lang];
             msg.style.color = "var(--success)";
         } else {
-            msg.innerText = "STATUS: FAIL";
+            msg.innerText = ui.statFail[lang];
             msg.style.color = "var(--danger)";
         }
 
         let analysisHtml = '';
-        for (let cat in stats) {
-            const stat = stats[cat];
+        for (let catId in stats) {
+            const stat = stats[catId];
             const accuracy = Math.round((stat.correct / stat.total) * 100);
             let color = accuracy >= 80 ? 'var(--success)' : (accuracy >= 60 ? 'var(--accent)' : 'var(--danger)');
-            let status = accuracy >= 80 ? '🌟 Mastered' : (accuracy >= 60 ? '🔨 Solidify' : '⚠️ Review');
+            
+            let statusKey = accuracy >= 80 ? 'mastered' : (accuracy >= 60 ? 'solidify' : 'review');
+            let status = ui.statusLabels[statusKey][lang];
+            let catName = catMap[catId][lang];
 
             analysisHtml += `
                 <div class="analysis-item">
-                    <div class="cat-header"><span>${cat}</span><span>${accuracy}%</span></div>
+                    <div class="cat-header"><span>${catName}</span><span>${accuracy}%</span></div>
                     <div class="progress-container"><div class="progress-bar" style="width:${accuracy}%; background-color:${color}"></div></div>
                     <div class="status-row"><span class="status-tag" style="color:${color}">${status} (${stat.correct}/${stat.total})</span></div>
                 </div>`;
@@ -357,7 +658,11 @@
         window.scrollTo({ top: document.getElementById('quiz-form').offsetTop, behavior: 'smooth' });
     }
 
-    window.onload = initTest;
+    // Initialize with default English
+    window.onload = () => {
+        setLang('en');
+        initTest();
+    };
 </script>
 </body>
 </html>
