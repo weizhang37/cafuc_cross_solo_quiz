@@ -155,6 +155,8 @@
             .btn-submit, .btn-hint, .action-btns, .info-section, .subtitle, .lang-toggle, .btn-action { display: none !important; }
             .container { box-shadow: none; border: none; width: 100%; padding: 0; }
             #quiz-form, .feedback { display: block !important; }
+            /* 打印时也显示日期 */
+            #res-date { display: block !important; }
         }
 
         @media (min-width: 600px) {
@@ -180,6 +182,10 @@
             <label id="lbl-name">Full Name:</label>
             <input type="text" id="studentName" placeholder="Candidate Name">
         </div>
+        <div class="input-group">
+            <label id="lbl-date">Test Date:</label>
+            <input type="date" id="testDate">
+        </div>
         <div class="input-group" id="instructor-group" style="display: none;">
             <label id="lbl-inst">Instructor Name:</label>
             <input type="text" id="instructorName" placeholder="Instructor Name">
@@ -192,8 +198,9 @@
 
     <div id="result-area">
         <h2 style="color: var(--primary); margin: 0; font-size: 1.2rem;" id="rep-title">CAFUC GL 02: WRITTEN TEST REPORT</h2>
-        <div id="res-student" style="font-size: 1rem; margin: 10px 0; font-weight: bold;"></div>
+        <div id="res-student" style="font-size: 1rem; margin: 10px 0 5px 0; font-weight: bold;"></div>
         <div id="res-instructor" style="font-size: 0.9rem; margin: 5px 0; color: #555; display: none;"></div>
+        <div id="res-date" style="font-size: 0.9rem; margin: 0 0 15px 0; color: #555;"></div>
         
         <div class="score-num" id="score-display">0%</div>
         <div id="res-msg" style="font-weight: bold; margin-bottom: 15px;"></div>
@@ -218,12 +225,14 @@
         subtitle: { en: "HKIAA Assessment & Integrated Syllabus | 20 Questions | Pass: 80%", zh: "整体大纲学员评估 | 20题 | 及格线: 80%" },
         nameLabel: { en: "Full Name:", zh: "考生姓名:" },
         namePlaceholder: { en: "Candidate Name", zh: "请输入考生姓名" },
+        dateLabel: { en: "Test Date:", zh: "考试日期:" },
         instLabel: { en: "Instructor Name:", zh: "责任教员姓名:" },
         instPlaceholder: { en: "Instructor Name", zh: "请输入责任教员姓名" },
         submitBtn: { en: "Submit & Generate Report", zh: "提交并生成报告" },
         repTitle: { en: "CAFUC GL 02: WRITTEN TEST REPORT", zh: "广汉分院单飞笔试成绩报告" },
         candRes: { en: "Candidate: ", zh: "考生姓名: " },
         instRes: { en: "Instructor: ", zh: "责任教员: " },
+        dateRes: { en: "Date: ", zh: "考试日期: " },
         statPass: { en: "STATUS: PASS", zh: "考核状态：合格" },
         statFail: { en: "STATUS: FAIL", zh: "考核状态：不合格" },
         anaTitle: { en: "📊 Performance Analysis", zh: "📊 成绩与分类分析" },
@@ -237,6 +246,7 @@
         incorrect: { en: "❌ Incorrect.", zh: "❌ 错误。" },
         corrAns: { en: "Correct Answer:", zh: "正确答案:" },
         alertName: { en: "Please enter Candidate Name!", zh: "请输入考生姓名！" },
+        alertDate: { en: "Please select the Test Date!", zh: "请选择考试日期！" },
         alertInst: { en: "Please enter Instructor Name!", zh: "请输入责任教员姓名！" },
         statusLabels: {
             mastered: { en: '🌟 Mastered', zh: '🌟 已掌握' },
@@ -441,14 +451,18 @@
           q_en: "Requirement for a spin?", q_zh: "飞机进入螺旋的必要条件是什么？", 
           opts_en: ["Speed", "Stall + Yaw", "Bank", "Low Fuel"], opts_zh: ["速度极低", "失速加上偏航", "大坡度", "燃油不平衡"], 
           ans: 1, r_en: "Aggravated stall in uncoordinated flight.", r_zh: "飞机在不协调飞行状态下发生失速（失速+偏航）。" },
+        
+        // --- 替换的两道 SR20 特有题目 ---
         { catId: "Emerg", 
-          q_en: "Rotation behind large aircraft?", q_zh: "在大型客机之后起飞，抬轮时机应如何选择？", 
-          opts_en: ["After", "Before its point", "End", "Same"], opts_zh: ["在其抬轮点之后", "在其抬轮点之前", "跑道尽头", "相同位置"], 
-          ans: 1, r_en: "Rotate before preceding plane's point to avoid wake turbulence.", r_zh: "在前机抬轮点之前抬轮以避开下沉气流。" },
+          q_en: "SR20 engine failure in flight immediate action?", q_zh: "飞行中SR20发动机失效的记忆项目第一步是？", 
+          opts_en: ["Restart Engine", "Pitch for 87 KIAS", "Deploy CAPS", "Call Mayday"], opts_zh: ["尝试重新启动发动机", "调整姿态保持87 KIAS", "立即释放降落伞", "呼叫Mayday"], 
+          ans: 1, r_en: "Pitching for best glide (87 KIAS) is the first priority to buy time and distance.", r_zh: "首先应建立87 KIAS的最佳滑翔速度，以争取时间和距离。" },
         { catId: "Emerg", 
-          q_en: "Wake turbulence interval behind A320?", q_zh: "在A320等中型机后起飞的尾流间隔时间？", 
-          opts_en: ["1m", "2m", "5m", "10m"], opts_zh: ["1分钟", "2分钟", "5分钟", "10分钟"], 
-          ans: 1, r_en: "Standard 2 minutes.", r_zh: "标准尾流间隔为2分钟。" },
+          q_en: "SR20 CAPS deployment maximum demonstrated speed (Vpd)?", q_zh: "SR20 CAPS（整机降落伞系统）的最大允许开伞速度（Vpd）是多少？", 
+          opts_en: ["119 KIAS", "133 KIAS", "140 KIAS", "200 KIAS"], opts_zh: ["119 KIAS", "133 KIAS", "140 KIAS", "200 KIAS"], 
+          ans: 1, r_en: "Vpd for the SR20 is 133 KIAS.", r_zh: "SR20手册规定最大允许开伞速度(Vpd)为133 KIAS。" },
+        // ------------------------------
+
         { catId: "Emerg", 
           q_en: "FTD emergency eval for solo training?", q_zh: "首次单飞前FTD训练必须完成的应急项目评估包括？", 
           opts_en: ["Gear", "CAPS Deployment", "Icing", "Fuel"], opts_zh: ["起落架故障", "CAPS使用及中断起飞", "结冰", "燃油泄漏"], 
@@ -501,6 +515,7 @@
         document.getElementById('sub-title').innerHTML = ui.subtitle[lang];
         document.getElementById('lbl-name').innerHTML = ui.nameLabel[lang];
         document.getElementById('studentName').placeholder = ui.namePlaceholder[lang];
+        document.getElementById('lbl-date').innerHTML = ui.dateLabel[lang];
         document.getElementById('main-submit-btn').innerHTML = ui.submitBtn[lang];
         
         // Handle Instructor Field
@@ -565,6 +580,9 @@
     function submitQuiz() {
         const name = document.getElementById('studentName').value.trim();
         if(!name) { alert(ui.alertName[lang]); return; }
+        
+        const testDate = document.getElementById('testDate').value;
+        if(!testDate) { alert(ui.alertDate[lang]); return; }
 
         let instName = "";
         if(lang === 'zh') {
@@ -598,20 +616,21 @@
             }
         });
 
-        displayResults(name, instName, score, categoryStats);
+        displayResults(name, instName, testDate, score, categoryStats);
     }
 
-    function displayResults(name, instName, score, stats) {
+    function displayResults(name, instName, testDate, score, stats) {
         document.getElementById('quiz-form').style.display = 'none';
         document.getElementById('main-submit-btn').style.display = 'none';
         document.getElementById('student-info-input').style.display = 'none';
-        document.querySelector('.lang-toggle').style.display = 'none'; // Hide language toggle on result
+        document.querySelector('.lang-toggle').style.display = 'none';
         
         const resArea = document.getElementById('result-area');
         resArea.style.display = 'block';
         
         const finalPercent = Math.round((score / 20) * 100);
         document.getElementById('res-student').innerText = ui.candRes[lang] + name;
+        document.getElementById('res-date').innerText = ui.dateRes[lang] + testDate;
         
         const instDiv = document.getElementById('res-instructor');
         if(lang === 'zh' && instName) {
@@ -658,8 +677,15 @@
         window.scrollTo({ top: document.getElementById('quiz-form').offsetTop, behavior: 'smooth' });
     }
 
-    // Initialize with default English
+    // Initialize with default English and set today's date
     window.onload = () => {
+        // Set default date to today in local timezone format (YYYY-MM-DD)
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        document.getElementById('testDate').value = `${yyyy}-${mm}-${dd}`;
+        
         setLang('en');
         initTest();
     };
