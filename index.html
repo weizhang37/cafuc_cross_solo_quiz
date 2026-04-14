@@ -42,9 +42,21 @@
         h1 { text-align: center; color: var(--primary); font-size: 1.4rem; margin: 10px 0; text-transform: uppercase; }
         .subtitle { text-align: center; color: #666; font-size: 0.9rem; margin-bottom: 25px; border-bottom: 2px solid var(--secondary); padding-bottom: 15px; }
 
-        /* Input Section */
-        .info-section { background-color: var(--secondary); padding: 20px; border-radius: 10px; margin-bottom: 25px; display: grid; grid-template-columns: 1fr; gap: 15px;}
-        @media (min-width: 600px) { .info-section { grid-template-columns: 1fr 1fr; } }
+        /* Input Section - 修复了不对齐的问题 */
+        .info-section { 
+            background-color: var(--secondary); 
+            padding: 20px; 
+            border-radius: 10px; 
+            margin-bottom: 25px; 
+            display: grid; 
+            grid-template-columns: 1fr; 
+            gap: 15px;
+            align-items: start;
+        }
+        /* 采用自适应网格，根据输入框数量自动平分列宽并对齐 */
+        @media (min-width: 600px) { 
+            .info-section { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); } 
+        }
         
         .input-group label { font-weight: bold; color: var(--primary); display: block; margin-bottom: 5px; font-size: 0.95rem; }
         .input-group input { padding: 12px; border: 1px solid #c0d1e3; border-radius: 8px; width: 100%; box-sizing: border-box; font-size: 1rem; transition: border 0.3s; }
@@ -121,7 +133,7 @@
 
 <div id="image-modal">
     <p id="modal-hint">📸 移动端请长按下方图片保存 / Long press image to save</p>
-    <img id="generated-img" alt="Certificate Image" />
+    <img id="generated-img" alt="Test Result Image" />
     <br>
     <button class="btn-close-modal" onclick="document.getElementById('image-modal').style.display='none'">关闭 / Close</button>
 </div>
@@ -172,7 +184,7 @@
 
         <div class="action-btns">
             <button class="btn-action btn-review" id="btn-rev" onclick="reviewMistakes()">🔍 Review</button>
-            <button class="btn-action btn-pdf" id="btn-save" onclick="saveAsImage()">📸 生成凭证</button>
+            <button class="btn-action btn-pdf" id="btn-save" onclick="saveAsImage()">📸 保存结果</button>
             <button class="btn-action btn-restart" id="btn-res" onclick="window.location.reload()">🔄 Restart</button>
         </div>
     </div>
@@ -195,9 +207,9 @@
         passCrit: { en: "Minimum required to pass: 12 correct", zh: "通过考试最低要求：答对 12 题" },
         anaTitle: { en: "📊 Performance Analysis", zh: "📊 各项能力分析报告" },
         btnRev: { en: "🔍 Review", zh: "🔍 错题回顾" },
-        btnSave: { en: "📸 Gen Image", zh: "📸 生成凭证" },
+        btnSave: { en: "📸 Save Results", zh: "📸 保存结果" },
         btnRes: { en: "🔄 Restart", zh: "🔄 重新测试" },
-        hintBtn: { en: "Regulation Hint", zh: "条例提示" },
+        hintBtn: { en: "Hint", zh: "提示" },
         alertName: { en: "Please enter Student Name!", zh: "请输入学员姓名！" },
         alertInst: { en: "Please enter Instructor Name!", zh: "请输入所属教员！" },
         correct: { en: "✅ Correct.", zh: "✅ 正确。" },
@@ -213,7 +225,7 @@
     };
 
     const catMap = {
-        "Local": { en: "Local & Terminal Procedures", zh: "本场与进离场程序" },
+        "Local": { en: "Local & Outfield Procedures", zh: "本场与外场程序" },
         "Regs": { en: "Regulations & Endorsements", zh: "规章与签注要求" },
         "NavWx": { en: "Navigation & Weather", zh: "航行与气象决策" },
         "Ops": { en: "Flight Operations & Training", zh: "飞行操作与训练标准" }
@@ -359,7 +371,6 @@
         document.getElementById('lbl-date').innerHTML = ui.dateLabel[lang];
         document.getElementById('main-submit-btn').innerHTML = ui.submitBtn[lang];
         
-        // 只有中文模式才显示“所属教员”框
         document.getElementById('instructor-group').style.display = lang === 'zh' ? 'block' : 'none';
         document.getElementById('lbl-inst').innerHTML = ui.instLabel[lang];
         
@@ -628,7 +639,7 @@
         const dd = String(today.getDate()).padStart(2, '0');
         document.getElementById('testDate').value = `${yyyy}-${mm}-${dd}`;
         
-        setLang('zh'); // 默认中文，更符合国内航校习惯
+        setLang('zh'); // 默认中文
     };
 </script>
 </body>
