@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>GL04 XC SOLO CHECK</title>
+    <title>FL30 / GL04 XC SOLO TEST</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         /* --- Mobile-First Base Styles --- */
         :root {
@@ -52,9 +53,17 @@
         /* Section Headers */
         .section-header { background: var(--primary); color: white; padding: 12px 15px; border-radius: 8px; margin: 30px 0 15px 0; font-weight: bold; font-size: 1.1rem; }
 
-        /* Question Cards */
+        /* Question Cards & Hints */
         .question-card { margin-bottom: 20px; padding: 20px; border: 1px solid #e1e8ed; border-radius: 10px; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
-        .tag { display: inline-block; background-color: #f0f4f8; color: #1967d2; padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; margin-bottom: 15px; font-weight: bold; text-transform: uppercase; }
+        .question-header-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
+        .tag { display: inline-block; background-color: #f0f4f8; color: #1967d2; padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; }
+        
+        .btn-hint { background-color: #fff8e1; color: #f57f17; border: 1px solid #ffe082; padding: 6px 12px; font-size: 0.8rem; font-weight: bold; border-radius: 6px; cursor: pointer; white-space: nowrap; transition: 0.2s;}
+        .btn-hint:hover { background-color: #ffecb3; }
+        
+        .hint-box { display: none; margin: 0 0 15px 0; padding: 15px; background-color: #f8f9fa; border-left: 4px solid var(--accent); font-size: 0.9rem; color: #444; line-height: 1.5; border-radius: 0 8px 8px 0; }
+        .hint-source { font-weight: bold; color: var(--primary); display: block; margin-bottom: 6px; font-size: 0.85rem; }
+        
         .question-text { font-size: 1.05rem; font-weight: 600; color: var(--text); margin-bottom: 15px; }
 
         /* Options */
@@ -62,7 +71,6 @@
         .options label:hover { background: #f0f4f8; border-color: #c0d1e3; }
         .options input { margin-right: 15px; width: 18px; height: 18px; flex-shrink: 0; }
         
-        /* TF specific layout */
         .tf-options { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .tf-options label { margin-bottom: 0; justify-content: center; font-weight: bold; font-size: 1rem; padding: 16px; }
         
@@ -75,20 +83,35 @@
         .score-num { font-size: 4rem; font-weight: bold; margin: 10px 0; }
         .pass-criteria { font-size: 0.95rem; color: #666; margin-bottom: 20px; }
         
+        /* Analysis Box */
+        .analysis-box { background: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 12px; padding: 15px; margin-bottom: 25px; text-align: left; }
+        .analysis-item { margin-bottom: 15px; }
+        .cat-header { display: flex; justify-content: space-between; font-size: 0.9rem; font-weight: bold; margin-bottom: 5px; color: var(--primary); }
+        .progress-container { height: 10px; background-color: #e9ecef; border-radius: 5px; overflow: hidden; margin-bottom: 5px; }
+        .progress-bar { height: 100%; transition: width 1s ease-in-out; }
+        .status-row { display: flex; justify-content: flex-end; }
+        .status-tag { font-size: 0.75rem; font-weight: bold; }
+
         .feedback { display: none; margin-top: 15px; padding: 15px; border-radius: 8px; font-size: 0.95rem; border-left: 4px solid #666; background: #f8f9fa; text-align: left; line-height: 1.5; }
         .correct-bg { background-color: #d4edda !important; border-color: var(--success) !important; color: #155724; }
         .wrong-bg { background-color: #f8d7da !important; border-color: var(--danger) !important; color: #721c24; }
 
-        .action-btns { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-top: 30px; }
+        .action-btns { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-top: 20px; }
         .btn-action { padding: 14px; cursor: pointer; font-weight: bold; border-radius: 8px; border: none; font-size: 1rem; transition: 0.2s; }
         .btn-pdf { background: var(--primary); color: white; }
         .btn-review { background: var(--secondary); color: var(--primary); border: 1px solid var(--primary); }
         .btn-restart { background: #6c757d; color: white; }
 
+        /* Modal */
+        #image-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; text-align: center; overflow-y: auto; padding: 20px; box-sizing: border-box; }
+        #image-modal p { color: white; font-weight: bold; margin-bottom: 15px; font-size: 1.1rem; }
+        #generated-img { max-width: 100%; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        .btn-close-modal { margin-top: 25px; padding: 12px 30px; background: #dc3545; color: white; border: none; border-radius: 25px; font-size: 1.1rem; font-weight: bold; cursor: pointer; }
+
         @media print {
-            .btn-submit, .action-btns, .info-section, .subtitle, .lang-toggle { display: none !important; }
+            .btn-submit, .action-btns, .info-section, .subtitle, .lang-toggle, .btn-hint { display: none !important; }
             .container { box-shadow: none; border: none; width: 100%; padding: 0; }
-            #quiz-form, .feedback { display: block !important; }
+            #quiz-form, .feedback, .hint-box { display: block !important; }
             .options label { border-color: #ccc !important; }
             body { background: white; }
         }
@@ -96,23 +119,34 @@
 </head>
 <body>
 
-<div class="container">
+<div id="image-modal">
+    <p id="modal-hint">📸 移动端请长按下方图片保存 / Long press image to save</p>
+    <img id="generated-img" alt="Certificate Image" />
+    <br>
+    <button class="btn-close-modal" onclick="document.getElementById('image-modal').style.display='none'">关闭 / Close</button>
+</div>
+
+<div class="container" id="capture-area">
     <div class="lang-toggle">
         <button class="lang-btn active" id="btn-en" onclick="setLang('en')">English</button>
         <button class="lang-btn" id="btn-zh" onclick="setLang('zh')">中文</button>
     </div>
 
-    <h1 id="main-title">✈️ CCAR-61 & SUINING XC SOLO CHECK</h1>
-    <div class="subtitle" id="sub-title">Regulations & Suining Local Procedures | 15 Questions | Pass: 12/15</div>
+    <h1 id="main-title">✈️ HKIAA GL04: CROSS COUNTRY SOLO TEST</h1>
+    <div class="subtitle" id="sub-title">15 Questions | Pass: 12/15</div>
     
     <div class="info-section" id="student-info-input">
         <div class="input-group">
-            <label id="lbl-name">Candidate Name:</label>
-            <input type="text" id="studentName" placeholder="Candidate Name">
+            <label id="lbl-name">Student Name:</label>
+            <input type="text" id="studentName" placeholder="Student Name">
         </div>
         <div class="input-group">
             <label id="lbl-date">Test Date:</label>
             <input type="date" id="testDate">
+        </div>
+        <div class="input-group" id="instructor-group" style="display: none;">
+            <label id="lbl-inst">Instructor:</label>
+            <input type="text" id="instructorName" placeholder="所属教员">
         </div>
     </div>
 
@@ -123,132 +157,191 @@
     <div id="result-area">
         <h2 style="color: var(--primary); margin: 0; font-size: 1.4rem;" id="rep-title">EVALUATION REPORT</h2>
         <div id="res-student" style="font-size: 1.1rem; margin: 15px 0 5px 0; font-weight: bold;"></div>
-        <div id="res-date" style="font-size: 0.95rem; margin: 0 0 20px 0; color: #555;"></div>
+        <div id="res-instructor" style="font-size: 1rem; margin: 5px 0; color: var(--primary); display: none; font-weight: bold;"></div>
+        <div id="res-date" style="font-size: 0.95rem; margin: 5px 0 20px 0; color: #555;"></div>
         
         <div class="score-num" id="score-display">0/15</div>
         <div class="pass-criteria" id="pass-crit">Minimum required to pass: 12 correct</div>
         
         <div id="res-msg" style="font-size: 1.3rem; font-weight: bold; margin-bottom: 25px; padding: 15px; border-radius: 8px;"></div>
         
+        <div class="analysis-box">
+            <h3 style="margin:0 0 15px 0; font-size: 1.1rem; border-bottom:1px solid #ddd; padding-bottom:8px;" id="ana-title">📊 Performance Analysis</h3>
+            <div id="analysis-content"></div>
+        </div>
+
         <div class="action-btns">
             <button class="btn-action btn-review" id="btn-rev" onclick="reviewMistakes()">🔍 Review</button>
-            <button class="btn-action btn-pdf" id="btn-save" onclick="window.print()">📥 PDF Report</button>
+            <button class="btn-action btn-pdf" id="btn-save" onclick="saveAsImage()">📸 生成凭证</button>
             <button class="btn-action btn-restart" id="btn-res" onclick="window.location.reload()">🔄 Restart</button>
         </div>
     </div>
 </div>
 
 <script>
-    // --- UI Dictionary ---
     const ui = {
-        title: { en: "HKIAA GL04: Cross country solo test", zh: "FL30：转场单飞检查理论考核" },
-        subtitle: { en: "Regulations & Local Procedures | 5 T/F + 10 MCQ | Pass: 12/15", zh: "规章与遂宁安居运行程序 | 5 判断 + 10 选择 | 及格线: 12/15" },
-        nameLabel: { en: "Candidate Name:", zh: "考生姓名:" },
+        title: { en: "✈️ HKIAA GL04: CROSS COUNTRY SOLO TEST", zh: "✈️ FL30：转场单飞检查理论考核" },
+        subtitle: { en: "15 Questions | Pass: 12/15", zh: "15 题 | 及格线: 12/15" },
+        nameLabel: { en: "Student Name:", zh: "学员姓名:" },
         dateLabel: { en: "Test Date:", zh: "考试日期:" },
+        instLabel: { en: "Instructor:", zh: "所属教员:" },
         submitBtn: { en: "Submit Test", zh: "交卷并生成成绩" },
-        repTitle: { en: "EVALUATION REPORT", zh: "转场单飞考核报告" },
-        candRes: { en: "Candidate: ", zh: "学员姓名: " },
-        dateRes: { en: "Date: ", zh: "考核日期: " },
+        repTitle: { en: "EVALUATION REPORT", zh: "转场单飞能力考核报告" },
+        candRes: { en: "Student: ", zh: "学员姓名: " },
+        instRes: { en: "Instructor: ", zh: "所属教员: " },
+        dateRes: { en: "Date: ", zh: "考试日期: " },
         statPass: { en: "STATUS: PASS", zh: "考核状态：合格 (CLEARED)" },
         statFail: { en: "STATUS: FAIL", zh: "考核状态：不合格 (NOT CLEARED)" },
         passCrit: { en: "Minimum required to pass: 12 correct", zh: "通过考试最低要求：答对 12 题" },
+        anaTitle: { en: "📊 Performance Analysis", zh: "📊 各项能力分析报告" },
         btnRev: { en: "🔍 Review", zh: "🔍 错题回顾" },
-        btnSave: { en: "📥 PDF Report", zh: "📥 保存考核凭证" },
+        btnSave: { en: "📸 Gen Image", zh: "📸 生成凭证" },
         btnRes: { en: "🔄 Restart", zh: "🔄 重新测试" },
-        alertName: { en: "Please enter Candidate Name!", zh: "请输入学员姓名！" },
+        hintBtn: { en: "Regulation Hint", zh: "条例提示" },
+        alertName: { en: "Please enter Student Name!", zh: "请输入学员姓名！" },
+        alertInst: { en: "Please enter Instructor Name!", zh: "请输入所属教员！" },
         correct: { en: "✅ Correct.", zh: "✅ 正确。" },
         incorrect: { en: "❌ Incorrect.", zh: "❌ 错误。" },
         corrAns: { en: "Correct Answer:", zh: "正确答案:" },
         secTF: { en: "Part I: True/False Questions", zh: "第一部分：判断题" },
-        secMCQ: { en: "Part II: Multiple Choice Questions", zh: "第二部分：单选题" }
+        secMCQ: { en: "Part II: Multiple Choice Questions", zh: "第二部分：单选题" },
+        statusLabels: {
+            mastered: { en: '🌟 Mastered', zh: '🌟 已掌握' },
+            solidify: { en: '🔨 Solidify', zh: '🔨 需巩固' },
+            review: { en: '⚠️ Review', zh: '⚠️ 需复习' }
+        }
     };
 
-    // --- Data Pools (3 CCAR TF + 2 Suining TF = 5 TF) ---
+    const catMap = {
+        "Local": { en: "Local & Terminal Procedures", zh: "本场与进离场程序" },
+        "Regs": { en: "Regulations & Endorsements", zh: "规章与签注要求" },
+        "NavWx": { en: "Navigation & Weather", zh: "航行与气象决策" },
+        "Ops": { en: "Flight Operations & Training", zh: "飞行操作与训练标准" }
+    };
+
+    const docGH = "GH-AP-FTM-02-R3 广汉分院单飞管理程序";
+    const docCCAR = "CCAR-61部 第61.109条";
+    const docRoute = "转场航线程序与频率";
+
+    // --- TF Pool (5 Questions) ---
     const tfPool = [
-        { cat: "Local Proc - Suining",
+        { catId: "Local",
           q_en: "The standard traffic pattern altitude (TPA) for Suining Anju Airport is 2133 ft (650 m).", 
           q_zh: "遂宁安居机场的标准起落航线高度（起落高）为 2133 英尺（650 米）。",
           ans: 1, r_en: "True. The pattern altitude for Suining is exactly 2133 ft (650 m).", r_zh: "正确。遂宁安居机场规定的起落航线高度正是 2133 英尺（650 米）。" },
-        { cat: "Local Proc - Suining",
+        { catId: "Local",
           q_en: "The VOR navigational frequency for Suining Anju Airport is 113.3 MHz.", 
           q_zh: "遂宁安居机场的 VOR 导航台频率为 113.3 MHz。",
           ans: 1, r_en: "True. 113.3 MHz is the correct VOR frequency for Suining.", r_zh: "正确。113.3 MHz 是遂宁安居本场的正确 VOR 频率。" },
-        { cat: "CCAR-61 Endorsements",
-          q_en: "An authorized instructor only needs to endorse the student's logbook once at the beginning of the cross-country training phase.", 
-          q_zh: "授权教员只需在转场阶段开始前在飞行经历记录本上签注一次转场单飞批准即可，无需每次单飞都签。",
-          ans: 0, r_en: "False. The instructor must endorse the logbook prior to EACH cross-country solo flight.", r_zh: "错误。第61.109条(c)(3)规定：在【每次】转场单飞前，授权教员应当评估计划并在记录本上签字批准。" },
-        { cat: "CCAR-61 Instructor Duties",
+        { catId: "Regs",
+          q_en: "If the weather is exceptionally good, the instructor may make a temporary decision to allow the student to conduct a cross-country solo without declaring it to the squadron in advance.", 
+          q_zh: "如果天气极佳，责任教师可以临时决定让学生实施转场单飞，无需提前向大队申报计划。",
+          ans: 0, 
+          hint_en: "Section 7.4: Impromptu solos are strictly prohibited.", 
+          hint_zh: "根据 7.4 计划申报 要求：责任教师应提前向大队申报单飞计划... 不得临时实施单飞。", source: docGH,
+          r_en: "False. Solo plans must be declared in advance.", r_zh: "错误。分院规章明确规定不得临时实施单飞。" },
+        { catId: "Ops",
+          q_en: "During the execution of a solo flight, to save taxi time, the student may request to take off from an intersection (e.g., Taxiway B) if approved by the tower.", 
+          q_zh: "实施转场单飞时，为了节省滑行时间，在塔台允许的情况下学生可以使用 B 道口（或任何中间道口）起飞。",
+          ans: 0, 
+          hint_en: "Section 7.5(4): Solo flights must use the full runway.", 
+          hint_zh: "根据 7.5(4) 单飞实施 要求：单飞必须使用全跑道起飞。", source: docGH,
+          r_en: "False. Solo flights MUST use the full length of the runway for takeoff.", r_zh: "错误。规章明确要求单飞必须使用全跑道起飞。" },
+        { catId: "Regs",
           q_en: "Before approving a student's cross-country solo, the instructor must personally evaluate the current and forecast weather to ensure the flight can be completed under VFR.", 
           q_zh: "授权教员在批准学生每次转场单飞时，必须评估天气实况和预报，确定本次飞行能够按照目视飞行规则（VFR）完成。",
-          ans: 1, r_en: "True. This is a mandatory pre-flight duty for the instructor under CCAR-61.109(d).", r_zh: "正确。这是第61.109条(d)(2)规定的教员强制责任。" },
-        { cat: "CCAR-61 Airplane Training",
-          q_en: "Prior to conducting a cross-country solo in an airplane, the student must be trained to control the aircraft by reference to flight instruments only.", 
-          q_zh: "在飞机类别上实施转场单飞前，学生驾驶员必须已经完成了“只参考飞行仪表操纵航空器飞行”的训练动作。",
-          ans: 1, r_en: "True. CCAR-61.109(e)(1)(xii) requires training on flying by reference to instruments only.", r_zh: "正确。第61.109条(e)(1)(xii)明确要求完成：只参考飞行仪表操纵航空器飞行，包括平直飞行、转弯、下降、爬升等。" }
+          ans: 1, 
+          hint_en: "Per CCAR-61.109(d)(2): Evaluate weather reports and forecasts to ensure VFR flight.", 
+          hint_zh: "根据 CCAR-61.109(d)(2) 规定：授权教员在批准时应评估天气实况和预报，确定本次飞行能够按照目视飞行规则完成。", source: docCCAR,
+          r_en: "True. This is a mandatory pre-flight duty for the instructor under CCAR-61.", r_zh: "正确。这是局方规章规定的教员强制责任。" }
     ];
 
-    // --- Data Pools (8 CCAR MCQ + 2 Suining MCQ = 10 MCQ) ---
+    // --- MCQ Pool (10 Questions) ---
     const mcqPool = [
-        { cat: "Local Proc - Suining",
+        { catId: "Local",
           q_en: "What is the correct ILS frequency for Suining Anju Airport?",
           q_zh: "遂宁安居机场的 ILS（仪表着陆系统）频率是多少？",
           opts_en: ["108.95 MHz", "109.85 MHz", "113.3 MHz", "129.7 MHz"],
           opts_zh: ["108.95 MHz", "109.85 MHz", "113.3 MHz", "129.7 MHz"],
-          ans: 0, r_en: "The correct ILS frequency is 108.95. Be careful not to confuse it with 109.85!", r_zh: "正确的 ILS 频率是 108.95 MHz。这是一个极易记混的考点，千万不要在盲降进近时错调成 109.85 MHz！" },
-        { cat: "Local Proc - Suining",
+          ans: 0, r_en: "The correct ILS frequency is 108.95.", r_zh: "正确的 ILS 频率是 108.95 MHz。切勿与 109.85 MHz 混淆！" },
+        { catId: "Local",
           q_en: "During a cross-country flight to Suining Anju Airport, what are the correct frequencies for Approach (APP) and Tower (TWR)?",
           q_zh: "在飞往遂宁安居机场的转场中，进近（APP）和塔台（TWR）的正确频率分别是多少？",
           opts_en: ["APP: 122.4 / TWR: 129.7", "APP: 129.7 / TWR: 122.4", "APP: 113.3 / TWR: 122.4", "APP: 129.7 / TWR: 108.95"],
           opts_zh: ["进近 122.4 / 塔台 129.7", "进近 129.7 / 塔台 122.4", "进近 113.3 / 塔台 122.4", "进近 129.7 / 塔台 108.95"],
-          ans: 1, r_en: "Suining Approach is 129.7 MHz, and Tower is 122.4 MHz.", r_zh: "遂宁进近频率为 129.7 MHz，塔台频率为 122.4 MHz。到达移交点时需准确切换。" },
-        { cat: "CCAR-61 Licenses & Logs",
+          ans: 1, r_en: "Suining Approach is 129.7 MHz, and Tower is 122.4 MHz.", r_zh: "遂宁进近频率为 129.7 MHz，塔台频率为 122.4 MHz。" },
+        { catId: "Local",
+          q_en: "During a cross-country flight from Guanghan to Suining, which en-route frequencies will you need to use (e.g., Mianyang Approach, CAFUC Headquarters)?",
+          q_zh: "在从广汉到遂宁的转场航路上，你会使用到以下哪些航路/区域频率（例如：绵阳进近、校部）？",
+          opts_en: ["118.5, 120.575", "129.2, 120.5", "128.3, 120.575", "118.5, 120.75"],
+          opts_zh: ["118.5, 120.575", "129.2, 120.5", "128.3, 120.575", "118.5, 120.75"],
+          ans: 0, 
+          hint_en: "Mianyang is 118.5, and the Headquarters frequency has three decimal digits.", 
+          hint_zh: "绵阳进近为118.5，校部频率小数点后有三位（在空中切频极易与120.75混淆）。", source: docRoute,
+          r_en: "Mianyang Approach is 118.5 and CAFUC Headquarters is 120.575.", r_zh: "绵阳进近频率为 118.5，校部频率为 120.575。在转场途中的移交点必须准确切频。" },
+        { catId: "Ops",
+          q_en: "Before a cross-country solo, what is the minimum dual experience required at the planned destination airport?",
+          q_zh: "实施转场单飞前，对于计划前往的转场机场，有什么最低的带飞和落地经历要求？",
+          opts_en: ["1 dual flight, 1 landing", "2 dual flights, 1 landing", "2 dual flights, 2 landings and taxi experience", "3 dual flights, 3 landings"],
+          opts_zh: ["1 次转场带飞，1 次落地", "2 次转场带飞，1 次落地", "至少 2 次转场带飞，2 次落地和外场滑行经历", "3 次转场带飞，3 次落地"],
+          ans: 2, 
+          hint_en: "Section 7.1(2)b: Minimum 2 flights, 2 landings, and taxi experience.", 
+          hint_zh: "根据 7.1(2)b 转场单飞资质检查 要求：计划实施的转场机场，至少有 2 次的转场被带飞训练，且至少有 2 次落地训练和外场的滑行经历。", source: docGH,
+          r_en: "Requires 2 dual flights, 2 landings, and taxi experience.", r_zh: "至少有 2 次转场带飞训练、2 次落地训练和外场滑行经历。" },
+        { catId: "NavWx",
+          q_en: "What is the minimum cloud ceiling requirement specifically for a cross-country solo flight?",
+          q_zh: "本场单飞与转场单飞的云高（Ceiling）最低标准分别是多少？",
+          opts_en: ["Local 600m, XC 600m", "Local 800m, XC 1000m", "Local 600m, XC 1000m", "Local 1000m, XC 1200m"],
+          opts_zh: ["本场 600米，转场 600米", "本场 800米，转场 1000米", "本场 600米，转场 1000米", "本场 1000米，转场 1200米"],
+          ans: 2, 
+          hint_en: "Section 7.3: Local solo 600m, XC solo 1000m.", 
+          hint_zh: "根据 7.3 天气条件 规定：本场后续单飞云高 600m，转场单飞云高 1000m，能见度 5km，没有危险天气。", source: docGH,
+          r_en: "Local solo requires 600m, CROSS-COUNTRY solo requires 1000m.", r_zh: "本场后续单飞云高600m，而转场单飞云高要求为 1000m。" },
+        { catId: "Ops",
+          q_en: "Prior to the solo flight, who is explicitly responsible for completing the aircraft inspection including the engine run-up?",
+          q_zh: "实施单飞前，明确规定由谁负责完成包括发动机试车在内的飞机检查？",
+          opts_en: ["The Student", "The Instructor", "The Mechanic", "ATC"],
+          opts_zh: ["学生本人", "责任教师", "机务人员", "塔台"],
+          ans: 1, 
+          hint_en: "Section 7.5(1): The instructor completes the inspection and run-up.", 
+          hint_zh: "根据 7.5(1) 单飞实施 要求：实施单飞前，责任教师负责完成包括发动机试车的飞机检查。", source: docGH,
+          r_en: "The instructor is responsible for the pre-flight inspection and engine run-up.", r_zh: "实施单飞前，责任教师负责完成包括发动机试车的飞机检查。" },
+        { catId: "Regs",
           q_en: "Before a student pilot can conduct a cross-country solo, where must the authorized instructor place their signature approvals?",
           q_zh: "学生驾驶员在实施转场飞行前，必须由授权教员在哪些文件上作出签字批准？",
           opts_en: ["Only on the student pilot license", "Only in the pilot logbook", "On both the student pilot license and the pilot logbook", "On the aircraft maintenance log"],
           opts_zh: ["仅在学生驾驶员执照上", "仅在飞行经历记录本上", "在学生驾驶员执照上，以及飞行经历记录本上", "在航空器维修记录本上"],
-          ans: 2, r_en: "Signatures are required on both the license (category) and the logbook (make/model and each flight).", r_zh: "第61.109(c)规定，教员需在执照上签注类别，并在记录本上对型号和每次计划进行签注批准。" },
-        { cat: "CCAR-61 Pre-Flight Auth",
-          q_en: "Which of the following is NOT an explicitly listed duty of the instructor when authorizing a cross-country solo under CCAR-61.109(d)?",
-          q_zh: "根据第61.109(d)条，以下哪一项不是教员批准单飞时的法定核实事项？",
-          opts_en: ["Confirming the flight plan is correct", "Evaluating weather reports and forecasts", "Confirming the student's proficiency", "Personally refueling the aircraft"],
-          opts_zh: ["确认该驾驶员的转场计划是正确的", "评估天气实况和预报，确定符合VFR", "确认该驾驶员技术熟练，能够安全实施本次飞行", "亲自为航空器加注燃油"],
-          ans: 3, r_en: "The instructor must check the plan, weather, proficiency, and endorsements. Refueling is not listed as a regulatory duty here.", r_zh: "规章(d)款规定教员需确认计划、评估天气、确认技术熟练、确认签注有效。亲自加油不在此法定职责内。" },
-        { cat: "CCAR-61 Navigation",
-          q_en: "What specific navigational methods must an airplane student pilot be trained in before a cross-country solo?",
-          q_zh: "根据(e)款，飞机的学生驾驶员转场单飞前必须完成哪种航行方法的训练？",
-          opts_en: ["GPS fully coupled approaches only", "IFR airways navigation", "VFR navigation using magnetic compass, pilotage, and dead reckoning", "Celestial navigation"],
-          opts_zh: ["仅依靠GPS全耦合进近", "IFR（仪表飞行规则）航路导航", "使用航空地图作VFR航行，包括借助磁罗盘、地标领航和推测领航", "天文导航"],
-          ans: 2, r_en: "CCAR-61 requires training in VFR navigation using a magnetic compass, pilotage, and dead reckoning.", r_zh: "第61.109(e)(1)(i)明确要求：借助磁罗盘、使用地标领航和推测领航的航行。" },
-        { cat: "CCAR-61 Weather Judgment",
+          ans: 2, 
+          hint_en: "Per CCAR-61.109(c): Authorizations must be signed on both the student license and the logbook.", 
+          hint_zh: "根据 CCAR-61.109(c)(1)和(2) 的规定：教员需在其学生驾驶员执照上作出签字批准...并在其飞行经历记录本上对所飞型号航空器作出签字批准。", source: docCCAR,
+          r_en: "Signatures are required on both the license and the logbook.", r_zh: "根据局方规章，教员需在执照上签注类别，并在经历记录本上对型号进行签字批准。" },
+        { catId: "NavWx",
           q_en: "In addition to obtaining weather reports, what specific weather-related skill must the student be trained to perform IN FLIGHT?",
-          q_zh: "除了获取和分析天气预报，规章还要求学生必须在“飞行中”具备哪种与天气相关的识别能力？",
+          q_zh: "除了获取和分析天气预报，局方规章还要求学生必须在“飞行中”具备哪种与天气相关的识别能力？",
           opts_en: ["Measuring exact cloud base height using lasers", "Identifying critical weather situations and judging visibility", "Predicting frontal movements for the next 24 hours", "Calculating density altitude mentally"],
           opts_zh: ["使用激光设备精确测量云底高", "在飞行中临界天气情况的识别和能见度的判断", "预测未来24小时的锋面移动", "在脑海中精确计算密度高度"],
-          ans: 1, r_en: "Training must include in-flight identification of critical weather and visibility judgment.", r_zh: "第61.109(e)(1)(iii)要求：包括在飞行中临界天气情况的识别和能见度的判断。" },
-        { cat: "CCAR-61 Takeoff/Landing",
-          q_en: "What specific type of runway environments must an airplane student pilot be trained to handle prior to a cross-country solo?",
-          q_zh: "对于飞机的起飞、进近与着陆程序，规章明确要求必须包含在哪种机场/跑道上的操作训练？",
-          opts_en: ["International high-density airports", "Short and soft field airports", "Water aerodromes", "Aircraft carriers"],
-          opts_zh: ["国际高密度机场", "短小和松软机场", "水上机场", "航空母舰"],
-          ans: 1, r_en: "CCAR-61.109(e)(1)(x) specifically requires training for takeoffs and landings on short and soft fields.", r_zh: "第61.109(e)(1)(x)明确要求：包括在短小和松软机场上起飞、进近与着陆。" },
-        { cat: "CCAR-61 Climb Perf.",
-          q_en: "What specific climb performance maneuvers must be mastered by an airplane student pilot?",
-          q_zh: "飞机的学生驾驶员必须掌握哪两种特定的爬升方式？",
-          opts_en: ["Cruise climb and step climb", "Max angle of climb (Vx) and max rate of climb (Vy)", "IFR departure climb and missed approach climb", "Zoom climb and vertical climb"],
-          opts_zh: ["巡航爬升和阶梯爬升", "最大上升角(Vx)和最大上升率(Vy)爬升", "IFR离场爬升和复飞爬升", "跃升和垂直爬升"],
-          ans: 1, r_en: "Training must include best angle of climb (Vx) and best rate of climb (Vy).", r_zh: "第61.109(e)(1)(xi)明确要求掌握：最大上升角和最大上升率上升。" },
-        { cat: "CCAR-61 Hazard Avoidance",
-          q_en: "Which of the following hazard avoidance procedures is explicitly mandated for cross-country training?",
-          q_zh: "规章明确要求转场飞行训练必须包含以下哪种危险规避程序？",
+          ans: 1, 
+          hint_en: "Per CCAR-61.109(e)(1)(iii): Obtaining/analyzing weather, including in-flight identification of critical weather and visibility.", 
+          hint_zh: "根据 CCAR-61.109(e)(1)(iii) 的规定：航空天气实况报告和预报的获得与分析，包括在飞行中临界天气情况的识别和能见度的判断。", source: docCCAR,
+          r_en: "Training must include in-flight identification of critical weather and visibility judgment.", r_zh: "必须具备在空中动态识别临界天气和目测判断能见度的能力。" },
+        { catId: "Ops",
+          q_en: "Which of the following hazard avoidance procedures is explicitly mandated for cross-country training by CCAR-61?",
+          q_zh: "局方规章明确要求转场飞行训练必须包含以下哪种危险规避程序？",
           opts_en: ["Bird strike avoidance", "Volcanic ash avoidance", "Collision avoidance, wake turbulence avoidance, and wind shear avoidance", "Laser illumination avoidance"],
           opts_zh: ["鸟击防范程序", "火山灰避让程序", "防撞、预防尾流颠簸和避让风切变的程序与操作常规", "激光照射防范程序"],
-          ans: 2, r_en: "Training must cover collision, wake turbulence, and wind shear avoidance.", r_zh: "第61.109(e)(1)(vi)明确要求：防撞、预防尾流颠簸和避让风切变的程序与操作常规。" },
-        { cat: "CCAR-61 Terrain",
+          ans: 2, 
+          hint_en: "Per CCAR-61.109(e)(1)(vi): Procedures and operations for collision avoidance, wake turbulence, and wind shear.", 
+          hint_zh: "根据 CCAR-61.109(e)(1)(vi) 的规定：防撞、预防尾流颠簸和避让风切变的程序与操作常规。", source: docCCAR,
+          r_en: "Training must cover collision, wake turbulence, and wind shear avoidance.", r_zh: "明确要求包括防撞、尾流颠簸预防及风切变避让程序。" },
+        { catId: "NavWx",
           q_en: "Regarding the geographical area of the cross-country flight, the student must be trained in:",
-          q_zh: "关于转场飞行所涉及的地理区域，学生必须完成哪方面的训练？",
+          q_zh: "关于转场飞行所涉及的地理区域，学生必须完成哪方面的专门训练？",
           opts_en: ["Identifying all local landmarks for tourism", "Identifying, avoiding, and knowing operating limitations of hazardous terrain features", "Memorizing the elevation of all peaks", "Drawing a topographical map from memory"],
           opts_zh: ["识别所有当地用于旅游的地标", "危险地形特征的识别、避让和运行限制", "背诵区域内所有山峰的绝对标高", "凭记忆绘制出地形图"],
-          ans: 1, r_en: "Students must identify and avoid hazardous terrain features and understand operational limits.", r_zh: "第61.109(e)(1)(vii)要求：转场飞行地理区域中危险地形特征的识别、避让和运行限制。" }
+          ans: 1, 
+          hint_en: "Per CCAR-61.109(e)(1)(vii): Identification, avoidance, and operational limits regarding hazardous terrain features.", 
+          hint_zh: "根据 CCAR-61.109(e)(1)(vii) 的规定：转场飞行地理区域中危险地形特征的识别、避让和运行限制。", source: docCCAR,
+          r_en: "Students must identify and avoid hazardous terrain features.", r_zh: "必须掌握区域内危险地形特征的识别及其相关的运行限制。" }
     ];
 
     let lang = 'en'; 
@@ -266,13 +359,23 @@
         document.getElementById('lbl-date').innerHTML = ui.dateLabel[lang];
         document.getElementById('main-submit-btn').innerHTML = ui.submitBtn[lang];
         
+        // 只有中文模式才显示“所属教员”框
+        document.getElementById('instructor-group').style.display = lang === 'zh' ? 'block' : 'none';
+        document.getElementById('lbl-inst').innerHTML = ui.instLabel[lang];
+        
         document.getElementById('rep-title').innerHTML = ui.repTitle[lang];
         document.getElementById('pass-crit').innerHTML = ui.passCrit[lang];
+        document.getElementById('ana-title').innerHTML = ui.anaTitle[lang];
         document.getElementById('btn-rev').innerHTML = ui.btnRev[lang];
         document.getElementById('btn-save').innerHTML = ui.btnSave[lang];
         document.getElementById('btn-res').innerHTML = ui.btnRes[lang];
 
         renderQuiz();
+    }
+
+    function toggleHint(idx) {
+        const hBox = document.getElementById('hint' + idx);
+        hBox.style.display = hBox.style.display === 'block' ? 'none' : 'block';
     }
 
     function renderQuiz() {
@@ -289,13 +392,29 @@
         // Part 1: T/F
         html += `<div class="section-header">${ui.secTF[lang]}</div>`;
         tfPool.forEach((item) => {
-            const catStr = item.cat;
+            const catStr = catMap[item.catId][lang];
             const qStr = item['q_' + lang];
             const tfLabels = lang === 'en' ? ["False", "True"] : ["错误", "正确"];
+            const hintStr = item['hint_' + lang];
+            
+            let hintHtml = '';
+            if(hintStr) {
+                hintHtml = `
+                    <button type="button" class="btn-hint" onclick="toggleHint(${qIndex})">💡 ${ui.hintBtn[lang]}</button>
+                    <div class="hint-box" id="hint${qIndex}">
+                        <span class="hint-source">📘 ${item.source}</span>
+                        ${hintStr}
+                    </div>
+                `;
+            }
             
             html += `
             <div class="question-card">
-                <div class="tag">${catStr}</div>
+                <div class="question-header-row">
+                    <div class="tag">${catStr}</div>
+                    ${hintStr ? `<div style="flex-shrink:0;">${hintHtml.split('<div')[0]}</div>` : ''}
+                </div>
+                ${hintStr ? `<div class="hint-box" id="hint${qIndex}"><span class="hint-source">📘 ${item.source}</span>${hintStr}</div>` : ''}
                 <div class="question-text">${qIndex + 1}. ${qStr}</div>
                 <div class="options tf-options">
                     <label id="q${qIndex}_o1"><input type="radio" name="q${qIndex}" value="1" ${savedData[qIndex]=='1'?'checked':''}> ${tfLabels[1]}</label>
@@ -309,13 +428,29 @@
         // Part 2: MCQ
         html += `<div class="section-header">${ui.secMCQ[lang]}</div>`;
         mcqPool.forEach((item) => {
-            const catStr = item.cat;
+            const catStr = catMap[item.catId][lang];
             const qStr = item['q_' + lang];
             const optsArr = item['opts_' + lang];
+            const hintStr = item['hint_' + lang];
+            
+            let hintHtml = '';
+            if(hintStr) {
+                hintHtml = `
+                    <button type="button" class="btn-hint" onclick="toggleHint(${qIndex})">💡 ${ui.hintBtn[lang]}</button>
+                    <div class="hint-box" id="hint${qIndex}">
+                        <span class="hint-source">📘 ${item.source}</span>
+                        ${hintStr}
+                    </div>
+                `;
+            }
             
             html += `
             <div class="question-card">
-                <div class="tag">${catStr}</div>
+                <div class="question-header-row">
+                    <div class="tag">${catStr}</div>
+                    ${hintStr ? `<div style="flex-shrink:0;">${hintHtml.split('<div')[0]}</div>` : ''}
+                </div>
+                ${hintStr ? `<div class="hint-box" id="hint${qIndex}"><span class="hint-source">📘 ${item.source}</span>${hintStr}</div>` : ''}
                 <div class="question-text">${qIndex + 1}. ${qStr}</div>
                 <div class="options">
                     ${optsArr.map((o, oi) => `
@@ -335,13 +470,24 @@
     function submitQuiz() {
         const name = document.getElementById('studentName').value.trim();
         if(!name) { alert(ui.alertName[lang]); return; }
+        
+        let instName = "";
+        if(lang === 'zh') {
+            instName = document.getElementById('instructorName').value.trim();
+            if(!instName) { alert(ui.alertInst[lang]); return; }
+        }
+        
         const testDate = document.getElementById('testDate').value;
 
         let score = 0;
         let qIndex = 0;
+        const categoryStats = {};
 
         // Grade T/F
         tfPool.forEach((item) => {
+            if(!categoryStats[item.catId]) categoryStats[item.catId] = { total: 0, correct: 0 };
+            categoryStats[item.catId].total++;
+
             const selected = document.querySelector(`input[name="q${qIndex}"]:checked`);
             const fb = document.getElementById(`fb${qIndex}`);
             fb.style.display = 'block';
@@ -349,6 +495,7 @@
             
             if(selected && parseInt(selected.value) === item.ans) {
                 score++;
+                categoryStats[item.catId].correct++;
                 fb.innerHTML = `<span>${ui.correct[lang]}</span> <br> ${rStr}`;
                 document.getElementById(`q${qIndex}_o${item.ans}`).classList.add('correct-bg');
             } else {
@@ -362,6 +509,9 @@
 
         // Grade MCQ
         mcqPool.forEach((item) => {
+            if(!categoryStats[item.catId]) categoryStats[item.catId] = { total: 0, correct: 0 };
+            categoryStats[item.catId].total++;
+
             const selected = document.querySelector(`input[name="q${qIndex}"]:checked`);
             const fb = document.getElementById(`fb${qIndex}`);
             fb.style.display = 'block';
@@ -370,6 +520,7 @@
 
             if(selected && parseInt(selected.value) === item.ans) {
                 score++;
+                categoryStats[item.catId].correct++;
                 fb.innerHTML = `<span>${ui.correct[lang]}</span> <br> ${rStr}`;
                 document.getElementById(`q${qIndex}_o${item.ans}`).classList.add('correct-bg');
             } else {
@@ -380,20 +531,32 @@
             qIndex++;
         });
 
-        displayResults(name, testDate, score);
+        displayResults(name, instName, testDate, score, categoryStats);
     }
 
-    function displayResults(name, testDate, score) {
+    function displayResults(name, instName, testDate, score, stats) {
         document.getElementById('quiz-form').style.display = 'none';
         document.getElementById('main-submit-btn').style.display = 'none';
         document.getElementById('student-info-input').style.display = 'none';
         document.querySelector('.lang-toggle').style.display = 'none';
+        
+        // Hide all hint buttons during result view for cleaner PDF
+        document.querySelectorAll('.btn-hint').forEach(btn => btn.style.display = 'none');
+        document.querySelectorAll('.hint-box').forEach(box => box.style.display = 'none');
         
         const resArea = document.getElementById('result-area');
         resArea.style.display = 'block';
         
         document.getElementById('res-student').innerText = ui.candRes[lang] + name;
         document.getElementById('res-date').innerText = ui.dateRes[lang] + testDate;
+        
+        const instDiv = document.getElementById('res-instructor');
+        if(lang === 'zh' && instName) {
+            instDiv.innerText = ui.instRes[lang] + instName;
+            instDiv.style.display = 'block';
+        } else {
+            instDiv.style.display = 'none';
+        }
         
         document.getElementById('score-display').innerText = score + "/15";
         document.getElementById('score-display').style.color = score >= 12 ? 'var(--success)' : 'var(--danger)';
@@ -407,12 +570,55 @@
             msg.className = "wrong-bg";
         }
 
+        // Generate Analysis Report
+        let analysisHtml = '';
+        for (let catId in stats) {
+            const stat = stats[catId];
+            const accuracy = Math.round((stat.correct / stat.total) * 100);
+            let color = accuracy >= 80 ? 'var(--success)' : (accuracy >= 60 ? 'var(--accent)' : 'var(--danger)');
+            
+            let statusKey = accuracy >= 80 ? 'mastered' : (accuracy >= 60 ? 'solidify' : 'review');
+            let status = ui.statusLabels[statusKey][lang];
+            let catName = catMap[catId][lang];
+
+            analysisHtml += `
+                <div class="analysis-item">
+                    <div class="cat-header"><span>${catName}</span><span>${accuracy}%</span></div>
+                    <div class="progress-container"><div class="progress-bar" style="width:${accuracy}%; background-color:${color}"></div></div>
+                    <div class="status-row"><span class="status-tag" style="color:${color}">${status} (${stat.correct}/${stat.total})</span></div>
+                </div>`;
+        }
+        document.getElementById('analysis-content').innerHTML = analysisHtml;
+
         window.scrollTo(0, 0);
     }
 
     function reviewMistakes() {
         document.getElementById('quiz-form').style.display = 'block';
+        document.querySelectorAll('.btn-hint').forEach(btn => btn.style.display = 'inline-block');
         window.scrollTo({ top: document.getElementById('quiz-form').offsetTop, behavior: 'smooth' });
+    }
+
+    // --- 移动端截图保存功能 ---
+    function saveAsImage() {
+        const captureArea = document.getElementById('capture-area');
+        const actionBtns = document.querySelector('.action-btns');
+        
+        actionBtns.style.display = 'none';
+        
+        html2canvas(captureArea, { 
+            scale: 2, 
+            backgroundColor: '#f4f6f9' 
+        }).then(canvas => {
+            const imgData = canvas.toDataURL('image/jpeg', 0.95);
+            document.getElementById('generated-img').src = imgData;
+            document.getElementById('image-modal').style.display = 'block';
+            actionBtns.style.display = 'grid';
+        }).catch(err => {
+            console.error("生成图片失败", err);
+            alert("生成图片失败，请稍后重试。");
+            actionBtns.style.display = 'grid';
+        });
     }
 
     window.onload = () => {
